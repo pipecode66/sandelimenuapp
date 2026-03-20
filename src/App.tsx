@@ -88,6 +88,7 @@ function WhatsAppLogo({ size = 18, className }: WhatsAppLogoProps) {
 function App() {
   const [isEntryOpen, setIsEntryOpen] = useState(true)
   const [activeView, setActiveView] = useState<AppView>('home')
+  const [isMenuPickerOpen, setIsMenuPickerOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activeCategoryId, setActiveCategoryId] = useState(menuCategories[0].id)
   const [expandedProductId, setExpandedProductId] = useState<string | null>(
@@ -126,10 +127,17 @@ function App() {
 
   const openMenu = (categoryId = activeCategory.id, productId?: string) => {
     focusCategory(categoryId, productId)
+    setIsMenuPickerOpen(false)
     setIsMenuOpen(true)
   }
 
   const closeMenu = () => setIsMenuOpen(false)
+  const openMenuPicker = () => setIsMenuPickerOpen(true)
+  const closeMenuPicker = () => setIsMenuPickerOpen(false)
+
+  const handleMenuCategoryPick = (categoryId: string) => {
+    openMenu(categoryId)
+  }
 
   const handleCategorySelect = (categoryId: string) => {
     const currentMatch = expandedProductId
@@ -149,7 +157,7 @@ function App() {
 
     if (target === 'menu') {
       setActiveView('home')
-      openMenu()
+      openMenuPicker()
       return
     }
 
@@ -220,22 +228,24 @@ function App() {
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow
-    if (isMenuOpen) document.body.style.overflow = 'hidden'
+    if (isMenuOpen || isMenuPickerOpen) document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = previousOverflow
     }
-  }, [isMenuOpen])
+  }, [isMenuOpen, isMenuPickerOpen])
 
   useEffect(() => {
-    if (!isMenuOpen) return undefined
+    if (!isMenuOpen && !isMenuPickerOpen) return undefined
 
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') closeMenu()
+      if (event.key !== 'Escape') return
+      if (isMenuOpen) closeMenu()
+      if (isMenuPickerOpen) closeMenuPicker()
     }
 
     window.addEventListener('keydown', handleEscape)
     return () => window.removeEventListener('keydown', handleEscape)
-  }, [isMenuOpen])
+  }, [isMenuOpen, isMenuPickerOpen])
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '').trim()
@@ -315,7 +325,7 @@ function App() {
               <button
                 type="button"
                 className="menu-trigger"
-                onClick={() => openMenu()}
+                onClick={openMenuPicker}
               >
                 <MenuSquare size={17} />
                 Menu
@@ -360,7 +370,7 @@ function App() {
                     <button
                       type="button"
                       className="quick-card quick-card-main"
-                      onClick={() => openMenu()}
+                      onClick={openMenuPicker}
                     >
                       <span className="quick-icon">
                         <MenuSquare size={18} />
@@ -605,6 +615,43 @@ function App() {
           </>
         )}
       </div>
+
+      {isMenuPickerOpen ? (
+        <div className="menu-choice-backdrop" onClick={closeMenuPicker}>
+          <section
+            className="menu-choice-panel"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="menu-choice-close"
+              onClick={closeMenuPicker}
+              aria-label="Cerrar selector de categorias"
+            >
+              <X size={20} />
+            </button>
+
+            <img
+              className="menu-choice-logo"
+              src="/assets/logo.png"
+              alt="Logo principal de Sandeli"
+            />
+
+            <div className="menu-choice-list">
+              {menuCategories.map((category) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  className="menu-choice-pill"
+                  onClick={() => handleMenuCategoryPick(category.id)}
+                >
+                  {category.title}
+                </button>
+              ))}
+            </div>
+          </section>
+        </div>
+      ) : null}
 
       {isMenuOpen ? (
         <div className="menu-backdrop" onClick={closeMenu}>

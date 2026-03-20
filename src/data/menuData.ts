@@ -158,7 +158,7 @@ export const menuCategories: Category[] = [
   },
   {
     id: 'tortas-porcion',
-    title: 'Tortas por porcion',
+    title: 'Tortas por porción',
     blurb: 'Porciones individuales para acompanar tu cafe.',
     products: [
       {
