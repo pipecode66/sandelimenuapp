@@ -18,10 +18,9 @@
 
 .app-bg.is-entry {
   background:
-    radial-gradient(circle at 12% 10%, rgba(159, 31, 238, 0.18), transparent 42%),
-    radial-gradient(circle at 86% 16%, rgba(164, 28, 130, 0.16), transparent 40%),
-    radial-gradient(circle at 14% 86%, rgba(159, 147, 231, 0.2), transparent 46%),
-    linear-gradient(180deg, #ffffff 0%, #f4f1f7 58%, #dcd7d4 100%);
+    radial-gradient(circle at 86% 12%, rgba(164, 28, 130, 0.08), transparent 38%),
+    radial-gradient(circle at 14% 88%, rgba(159, 147, 231, 0.1), transparent 42%),
+    linear-gradient(180deg, #ffffff 0%, #ffffff 68%, #f6f3f8 100%);
   overflow: clip;
 }
 
@@ -29,68 +28,38 @@
 .app-bg.is-entry::after {
   content: '';
   position: fixed;
-  top: 0;
-  bottom: 0;
-  width: clamp(1.12rem, 5vw, 1.86rem);
+  width: clamp(14.5rem, 44vw, 20rem);
+  height: clamp(14.5rem, 44vw, 20rem);
   pointer-events: none;
-  border-radius: 0;
+  border-radius: 999px;
+  filter: blur(24px);
   z-index: -1;
-  animation: neon-drift 5.8s ease-in-out infinite alternate;
+  animation: neon-drift 7.6s ease-in-out infinite alternate;
 }
 
 .app-bg.is-entry::before {
-  left: 0;
-  background:
-    radial-gradient(
-      circle at 50% 10%,
-      rgba(159, 31, 238, 0.92) 0%,
-      rgba(164, 28, 130, 0.62) 40%,
-      transparent 82%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(159, 31, 238, 0.92) 0%,
-      rgba(164, 28, 130, 0.86) 44%,
-      rgba(159, 147, 231, 0.76) 100%
-    ),
-    radial-gradient(
-      circle at 50% 88%,
-      rgba(159, 147, 231, 0.88) 0%,
-      rgba(164, 28, 130, 0.54) 40%,
-      transparent 80%
-    );
-  box-shadow:
-    0 0 32px rgba(159, 31, 238, 0.64),
-    0 0 78px rgba(164, 28, 130, 0.42),
-    0 0 116px rgba(159, 147, 231, 0.32);
+  top: -8.4rem;
+  right: -8.2rem;
+  background: radial-gradient(
+    circle,
+    rgba(159, 31, 238, 0.54) 0%,
+    rgba(164, 28, 130, 0.42) 38%,
+    rgba(159, 147, 231, 0.28) 60%,
+    rgba(159, 31, 238, 0) 78%
+  );
 }
 
 .app-bg.is-entry::after {
-  right: 0;
-  background:
-    radial-gradient(
-      circle at 50% 12%,
-      rgba(164, 28, 130, 0.9) 0%,
-      rgba(159, 31, 238, 0.6) 42%,
-      transparent 82%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(164, 28, 130, 0.9) 0%,
-      rgba(159, 31, 238, 0.84) 46%,
-      rgba(159, 147, 231, 0.74) 100%
-    ),
-    radial-gradient(
-      circle at 50% 90%,
-      rgba(159, 147, 231, 0.86) 0%,
-      rgba(159, 31, 238, 0.52) 42%,
-      transparent 82%
-    );
-  box-shadow:
-    0 0 32px rgba(164, 28, 130, 0.62),
-    0 0 78px rgba(159, 31, 238, 0.4),
-    0 0 116px rgba(159, 147, 231, 0.3);
-  animation-delay: 0.38s;
+  left: -8.4rem;
+  bottom: -8.6rem;
+  background: radial-gradient(
+    circle,
+    rgba(164, 28, 130, 0.48) 0%,
+    rgba(159, 31, 238, 0.38) 36%,
+    rgba(159, 147, 231, 0.34) 58%,
+    rgba(159, 147, 231, 0) 80%
+  );
+  animation-delay: 0.7s;
 }
 
 .phone-shell {
@@ -1235,13 +1204,13 @@
 
 @keyframes neon-drift {
   from {
-    filter: blur(0.35px) saturate(1);
-    transform: scaleY(1);
-    opacity: 0.84;
+    filter: blur(22px) saturate(1);
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.8;
   }
   to {
-    filter: blur(1.2px) saturate(1.2);
-    transform: scaleY(1.03);
+    filter: blur(27px) saturate(1.15);
+    transform: translate3d(6px, 8px, 0) scale(1.07);
     opacity: 1;
   }
 }
