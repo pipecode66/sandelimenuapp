@@ -1,0 +1,17 @@
+{
+  "name": "Sandeli Menu Web",
+  "short_name": "Sandeli",
+  "description": "Menu mobile-first de Sandeli con categorias, contacto y feedback.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#dcd7d4",
+  "theme_color": "#9f1fee",
+  "icons": [
+    {
+      "src": "/assets/logoIOS.png",
+      "sizes": "768x768",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
