@@ -62,6 +62,25 @@ const productLookup = new Map(
 const createWhatsAppHref = (phone: string, message: string) =>
   `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
 
+const menuRoutePath = '/menú'
+const menuRouteAlias = '/menu'
+
+const normalizePathname = (pathname: string) => {
+  try {
+    return decodeURIComponent(pathname).toLowerCase().replace(/\/+$/, '') || '/'
+  } catch {
+    return pathname.toLowerCase().replace(/\/+$/, '') || '/'
+  }
+}
+
+const isMenuRoute = (pathname: string) => {
+  const normalized = normalizePathname(pathname)
+  return normalized === menuRoutePath || normalized === menuRouteAlias
+}
+
+const startsInMenuRoute = () =>
+  typeof window !== 'undefined' && isMenuRoute(window.location.pathname)
+
 type WhatsAppLogoProps = {
   size?: number
   className?: string
@@ -86,9 +105,11 @@ function WhatsAppLogo({ size = 18, className }: WhatsAppLogoProps) {
 }
 
 function App() {
-  const [isEntryOpen, setIsEntryOpen] = useState(true)
+  const [isEntryOpen, setIsEntryOpen] = useState(() => !startsInMenuRoute())
   const [activeView, setActiveView] = useState<AppView>('home')
-  const [isMenuPickerOpen, setIsMenuPickerOpen] = useState(false)
+  const [isMenuPickerOpen, setIsMenuPickerOpen] = useState(() =>
+    startsInMenuRoute(),
+  )
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activeCategoryId, setActiveCategoryId] = useState(menuCategories[0].id)
   const [expandedProductId, setExpandedProductId] = useState<string | null>(
@@ -132,8 +153,24 @@ function App() {
   }
 
   const closeMenu = () => setIsMenuOpen(false)
-  const openMenuPicker = () => setIsMenuPickerOpen(true)
+  const openMenuPicker = () => {
+    setIsEntryOpen(false)
+    setActiveView('home')
+    setIsMenuOpen(false)
+    setIsMenuPickerOpen(true)
+  }
   const closeMenuPicker = () => setIsMenuPickerOpen(false)
+
+  const pushMenuRoute = () => {
+    if (typeof window === 'undefined') return
+    if (isMenuRoute(window.location.pathname)) return
+    window.history.pushState(null, '', menuRoutePath)
+  }
+
+  const handleMenuAccess = () => {
+    openMenuPicker()
+    pushMenuRoute()
+  }
 
   const handleMenuCategoryPick = (categoryId: string) => {
     openMenu(categoryId)
@@ -153,14 +190,12 @@ function App() {
   }
 
   const handleEntrySelect = (target: EntryTarget) => {
-    setIsEntryOpen(false)
-
     if (target === 'menu') {
-      setActiveView('home')
-      openMenuPicker()
+      handleMenuAccess()
       return
     }
 
+    setIsEntryOpen(false)
     setActiveView(target)
   }
 
@@ -258,6 +293,25 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    const handlePopState = () => {
+      if (isMenuRoute(window.location.pathname)) {
+        setIsEntryOpen(false)
+        setActiveView('home')
+        setIsMenuOpen(false)
+        setIsMenuPickerOpen(true)
+        return
+      }
+
+      setIsMenuOpen(false)
+      setIsMenuPickerOpen(false)
+      setIsEntryOpen(true)
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
+
   return (
     <>
       <div className={`app-bg ${isEntryOpen ? 'is-entry' : ''}`} />
@@ -325,7 +379,7 @@ function App() {
               <button
                 type="button"
                 className="menu-trigger"
-                onClick={openMenuPicker}
+                onClick={handleMenuAccess}
               >
                 <MenuSquare size={17} />
                 Menu
@@ -370,7 +424,7 @@ function App() {
                     <button
                       type="button"
                       className="quick-card quick-card-main"
-                      onClick={openMenuPicker}
+                      onClick={handleMenuAccess}
                     >
                       <span className="quick-icon">
                         <MenuSquare size={18} />
