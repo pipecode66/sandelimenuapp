@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sandeli-menu-cache-v1'
+const CACHE_NAME = 'sandeli-menu-cache-v2'
 
 const APP_SHELL = [
   '/',
@@ -33,28 +33,60 @@ self.addEventListener('activate', (event) => {
   )
 })
 
+const isNavigating = (request) =>
+  request.mode === 'navigate' || request.destination === 'document'
+
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') {
+  const { request } = event
+
+  if (request.method !== 'GET') {
     return
   }
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse
-      }
+  const requestUrl = new URL(request.url)
+  if (requestUrl.origin !== self.location.origin) {
+    return
+  }
 
-      return fetch(event.request)
+  // Navigation must prefer network to avoid stale UI after deploys.
+  if (isNavigating(request)) {
+    event.respondWith(
+      fetch(request)
         .then((networkResponse) => {
           const responseClone = networkResponse.clone()
           caches
             .open(CACHE_NAME)
-            .then((cache) => cache.put(event.request, responseClone))
+            .then((cache) => cache.put(request, responseClone))
             .catch(() => undefined)
 
           return networkResponse
         })
-        .catch(() => cachedResponse)
+        .catch(() =>
+          caches.match(request).then((cachedResponse) => {
+            if (cachedResponse) return cachedResponse
+            return caches.match('/index.html')
+          }),
+        ),
+    )
+    return
+  }
+
+  // Static files can be cache-first for speed.
+  event.respondWith(
+    caches.match(request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse
+      }
+
+      return fetch(request).then((networkResponse) => {
+        const responseClone = networkResponse.clone()
+        caches
+          .open(CACHE_NAME)
+          .then((cache) => cache.put(request, responseClone))
+          .catch(() => undefined)
+
+        return networkResponse
+      })
     }),
   )
 })
