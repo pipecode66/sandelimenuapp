@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowUpRight,
   ChevronDown,
@@ -237,28 +237,40 @@ function App() {
                   className="entry-tile"
                   onClick={() => handleEntrySelect('menu')}
                 >
-                  Menú
+                  <span className="entry-tile-inner">
+                    <MenuSquare size={18} />
+                    Menú
+                  </span>
                 </button>
                 <button
                   type="button"
                   className="entry-tile"
                   onClick={() => handleEntrySelect('feedback')}
                 >
-                  Danos tu opinión
+                  <span className="entry-tile-inner">
+                    <MessageCircleHeart size={18} />
+                    Danos tu opinión
+                  </span>
                 </button>
                 <button
                   type="button"
                   className="entry-tile"
                   onClick={() => handleEntrySelect('find-us')}
                 >
-                  Encuéntranos
+                  <span className="entry-tile-inner">
+                    <MapPinned size={18} />
+                    Encuéntranos
+                  </span>
                 </button>
                 <button
                   type="button"
                   className="entry-tile"
                   onClick={() => handleEntrySelect('whatsapp')}
                 >
-                  WhatsApp
+                  <span className="entry-tile-inner">
+                    <MessageCircleMore size={18} />
+                    WhatsApp
+                  </span>
                 </button>
               </div>
             </div>

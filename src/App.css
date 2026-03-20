@@ -17,8 +17,11 @@
 }
 
 .app-bg.is-entry {
-  background: #8ea6b5;
-  background: color-mix(in srgb, var(--brand-soft) 34%, var(--stone) 66%);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(159, 31, 238, 0.18), transparent 42%),
+    radial-gradient(circle at 86% 16%, rgba(164, 28, 130, 0.16), transparent 40%),
+    radial-gradient(circle at 14% 86%, rgba(159, 147, 231, 0.2), transparent 46%),
+    linear-gradient(180deg, #ffffff 0%, #f4f1f7 58%, #dcd7d4 100%);
 }
 
 .phone-shell {
@@ -90,6 +93,7 @@
 .feedback-tile,
 .dock-item,
 .quick-card,
+.entry-tile,
 .product-toggle,
 .share-btn,
 .text-link {
@@ -154,13 +158,42 @@
 
 .entry-screen {
   min-height: calc(100svh - max(1rem, env(safe-area-inset-top)) - 1rem);
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
+  overflow: hidden;
+}
+
+.entry-screen::before,
+.entry-screen::after {
+  content: '';
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.entry-screen::before {
+  width: 12rem;
+  height: 12rem;
+  right: -3.2rem;
+  top: 1.5rem;
+  background: rgba(159, 31, 238, 0.22);
+}
+
+.entry-screen::after {
+  width: 10.5rem;
+  height: 10.5rem;
+  left: -3.4rem;
+  bottom: 4.3rem;
+  background: rgba(164, 28, 130, 0.2);
 }
 
 .entry-core {
+  position: relative;
+  z-index: 1;
   margin-top: auto;
   width: 100%;
   display: flex;
@@ -171,6 +204,8 @@
 
 .entry-core img {
   width: min(88%, 15.2rem);
+  filter: drop-shadow(0 10px 18px rgba(26, 27, 29, 0.1));
+  animation: logo-rise 650ms ease both;
 }
 
 .entry-grid {
@@ -184,33 +219,72 @@
   min-height: 3.55rem;
   width: 100%;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.86);
-  background: rgba(255, 255, 255, 0.04);
-  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.94);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(159, 31, 238, 0.78),
+      rgba(164, 28, 130, 0.78),
+      rgba(159, 147, 231, 0.72)
+    );
+  box-shadow: 0 9px 18px rgba(26, 27, 29, 0.13);
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: clamp(1.7rem, 6vw, 2rem);
+  font-size: clamp(1.34rem, 4.9vw, 1.7rem);
   font-weight: 600;
   letter-spacing: 0.01em;
   line-height: 1;
   padding: 0.65rem 1rem;
   cursor: pointer;
+  animation: entry-capsule-in 560ms ease both;
+}
+
+.entry-tile-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.54rem;
+  width: 100%;
+}
+
+.entry-grid .entry-tile:nth-child(1) {
+  animation-delay: 60ms;
+}
+
+.entry-grid .entry-tile:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.entry-grid .entry-tile:nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.entry-grid .entry-tile:nth-child(4) {
+  animation-delay: 240ms;
 }
 
 .entry-tile:hover,
 .entry-tile:focus-visible {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: none;
+  transform: translateY(-2px) scale(1.01);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(159, 31, 238, 0.86),
+      rgba(164, 28, 130, 0.86),
+      rgba(159, 147, 231, 0.82)
+    );
+  box-shadow: 0 12px 22px rgba(26, 27, 29, 0.18);
 }
 
 .entry-privacy {
+  position: relative;
+  z-index: 1;
   margin-top: auto;
-  padding-top: 1.5rem;
+  padding-top: 1.7rem;
   text-align: center;
-  color: rgba(255, 255, 255, 0.26);
+  color: rgba(26, 27, 29, 0.78);
   font-size: 0.82rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.01em;
 }
 
@@ -1026,6 +1100,11 @@
     animation: none;
   }
 
+  .entry-core img,
+  .entry-tile {
+    animation: none;
+  }
+
   .menu-trigger,
   .cta-main,
   .cta-soft,
@@ -1059,6 +1138,28 @@
   from {
     opacity: 0;
     transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes logo-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes entry-capsule-in {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
   }
   to {
     opacity: 1;
