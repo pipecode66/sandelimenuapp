@@ -1,5 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from 'react'
 import {
+  ArrowLeft,
   ArrowUpRight,
   BadgeCheck,
   CakeSlice,
@@ -171,7 +172,10 @@ function App() {
     setIsMenuOpen(true)
   }
 
-  const closeMenu = () => setIsMenuOpen(false)
+  const backToMenuPicker = () => {
+    setIsMenuOpen(false)
+    setIsMenuPickerOpen(true)
+  }
   const openMenuPicker = () => {
     setIsEntryOpen(false)
     setActiveView('home')
@@ -193,15 +197,6 @@ function App() {
 
   const handleMenuCategoryPick = (categoryId: string) => {
     openMenu(categoryId)
-  }
-
-  const handleCategorySelect = (categoryId: string) => {
-    const currentMatch = expandedProductId
-      ? productLookup.get(expandedProductId)
-      : undefined
-    const keepExpanded =
-      currentMatch?.category.id === categoryId ? currentMatch.product.id : null
-    focusCategory(categoryId, keepExpanded)
   }
 
   const handleProductToggle = (productId: string) => {
@@ -293,7 +288,7 @@ function App() {
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
-      if (isMenuOpen) closeMenu()
+      if (isMenuOpen) backToMenuPicker()
       if (isMenuPickerOpen) closeMenuPicker()
     }
 
@@ -734,100 +729,93 @@ function App() {
       ) : null}
 
       {isMenuOpen ? (
-        <div className="menu-backdrop" onClick={closeMenu}>
-          <section className="menu-sheet" onClick={(event) => event.stopPropagation()}>
-            <header className="sheet-head">
-              <div>
-                <span className="panel-kicker">Menu</span>
-                <h2>Categorias</h2>
-                <p>Explora, expande y comparte productos.</p>
-              </div>
+        <div className="menu-backdrop" onClick={backToMenuPicker}>
+          <section
+            className="menu-sheet menu-sheet-catalog"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header className="catalog-head">
               <button
                 type="button"
-                className="sheet-close"
-                onClick={closeMenu}
-                aria-label="Cerrar menu"
+                className="catalog-back"
+                onClick={backToMenuPicker}
+                aria-label="Volver a categorias"
               >
-                <X size={20} />
+                <ArrowLeft size={16} />
+                Categorias
               </button>
+              <img
+                className="catalog-logo-mini"
+                src="/assets/logoIOS.png"
+                alt=""
+                aria-hidden="true"
+              />
             </header>
 
-            <div className="category-grid">
-              {menuCategories.map((category) => (
-                <button
-                  key={category.id}
-                  type="button"
-                  className={`category-pill ${
-                    activeCategory.id === category.id ? 'is-active' : ''
-                  }`}
-                  onClick={() => handleCategorySelect(category.id)}
-                >
-                  {category.title}
-                </button>
-              ))}
-            </div>
+            <section className="catalog-hero">
+              <div
+                className="catalog-banner-placeholder"
+                role="img"
+                aria-label={`Placeholder de banner para ${activeCategory.title}`}
+              >
+                <img src="/assets/logo.png" alt="" aria-hidden="true" />
+                <span>Placeholder banner de categoria</span>
+              </div>
 
-            <nav className="sheet-tabs" aria-label="Tabs de categorias">
-              {menuCategories.map((category) => (
-                <button
-                  key={category.id}
-                  type="button"
-                  className={`sheet-tab ${
-                    activeCategory.id === category.id ? 'is-active' : ''
-                  }`}
-                  onClick={() => handleCategorySelect(category.id)}
-                >
-                  {category.title}
-                </button>
-              ))}
-            </nav>
+              <div className="catalog-title-pill">{activeCategory.title}</div>
+            </section>
 
-            <div className="sheet-list">
+            <div className="catalog-grid">
               {activeCategory.products.map((product) => {
                 const isExpanded = expandedProductId === product.id
 
                 return (
                   <article
                     key={product.id}
-                    className={`product-card ${isExpanded ? 'is-open' : ''}`}
+                    className={`catalog-product-card ${isExpanded ? 'is-open' : ''}`}
                   >
-                    <figure className="product-media">
-                      <img src={product.imageSrc} alt={product.imageAlt} />
-                      <figcaption>{product.description}</figcaption>
-                    </figure>
-
                     <button
                       type="button"
-                      className="product-toggle"
+                      className="catalog-product-toggle"
                       onClick={() => handleProductToggle(product.id)}
                       aria-expanded={isExpanded}
                     >
-                      <div>
-                        <h4>{product.name}</h4>
-                        <span>Toca para ver detalles y precio</span>
+                      <div className="catalog-product-media" aria-hidden="true">
+                        <span>Imagen del producto</span>
                       </div>
-                      <ChevronDown size={18} />
+
+                      <div className="catalog-product-body">
+                        <span className="catalog-product-meta-line">
+                          <Clock3 size={14} />
+                          Sandeli saludable
+                        </span>
+                        <h4>{product.name}</h4>
+                        <p>{product.description}</p>
+
+                        <div className="catalog-product-price-row">
+                          <strong>{product.price}</strong>
+                          <ChevronDown size={17} />
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="share-btn catalog-share-btn"
+                      onClick={() => shareProduct(activeCategory, product)}
+                    >
+                      <Share2 size={15} />
+                      Compartir
                     </button>
 
                     {isExpanded ? (
-                      <div className="product-details">
+                      <div className="catalog-product-details">
+                        <h5>Ingredientes</h5>
                         <ul>
                           {product.details.map((detail) => (
                             <li key={detail}>{detail}</li>
                           ))}
                         </ul>
-
-                        <div className="product-meta">
-                          <strong>{product.price}</strong>
-                          <button
-                            type="button"
-                            className="share-btn"
-                            onClick={() => shareProduct(activeCategory, product)}
-                          >
-                            <Share2 size={15} />
-                            Compartir
-                          </button>
-                        </div>
                       </div>
                     ) : null}
                   </article>

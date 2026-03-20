@@ -1005,28 +1005,305 @@
 .menu-backdrop {
   position: fixed;
   inset: 0;
-  background: color-mix(in srgb, var(--ink) 54%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   z-index: 24;
+  background:
+    radial-gradient(
+      circle at 88% 9%,
+      color-mix(in srgb, var(--brand-primary) 10%, transparent),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 12% 92%,
+      color-mix(in srgb, var(--brand-secondary) 10%, transparent),
+      transparent 42%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 97%, var(--sand) 3%),
+      color-mix(in srgb, white 92%, var(--sand) 8%)
+    );
+  padding: max(0.85rem, env(safe-area-inset-top)) 0.82rem
+    max(0.95rem, env(safe-area-inset-bottom));
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: flex-start;
+  overflow: auto;
 }
 
 .menu-sheet {
   width: min(440px, 100%);
-  max-height: min(88svh, 780px);
-  border-radius: 1.34rem 1.34rem 0 0;
+  min-height: calc(100svh - max(0.85rem, env(safe-area-inset-top)) - 0.95rem);
+  border-radius: 1.36rem;
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, white 95%, var(--sand) 5%),
-      color-mix(in srgb, white 84%, var(--sand) 16%)
+      color-mix(in srgb, white 97%, var(--sand) 3%),
+      color-mix(in srgb, white 88%, var(--sand) 12%)
     );
-  padding: 0.78rem 0.74rem 0.84rem;
-  overflow: auto;
-  animation: sheet-in 250ms ease both;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 18%, transparent);
+  box-shadow:
+    0 24px 60px color-mix(in srgb, var(--ink) 15%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  padding: 0.78rem 0.74rem 0.94rem;
+  animation: enter 260ms ease both;
+}
+
+.menu-sheet-catalog {
+  display: flex;
+  flex-direction: column;
+  gap: 0.84rem;
+}
+
+.catalog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.56rem;
+}
+
+.catalog-back {
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--brand-primary) 10%, white);
+  color: var(--brand-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  padding: 0.5rem 0.76rem;
+  cursor: pointer;
+}
+
+.catalog-logo-mini {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 24%, transparent);
+  background: color-mix(in srgb, white 82%, var(--sand) 18%);
+  padding: 0.22rem;
+}
+
+.catalog-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.catalog-banner-placeholder {
+  width: 100%;
+  min-height: 11rem;
+  border-radius: 1.2rem;
+  border: 1px dashed color-mix(in srgb, var(--brand-primary) 34%, transparent);
+  background:
+    radial-gradient(
+      circle at 84% 18%,
+      color-mix(in srgb, var(--brand-primary) 20%, transparent),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 14% 80%,
+      color-mix(in srgb, var(--brand-secondary) 17%, transparent),
+      transparent 44%
+    ),
+    linear-gradient(
+      148deg,
+      color-mix(in srgb, white 91%, var(--sand) 9%),
+      color-mix(in srgb, white 83%, var(--brand-soft) 17%)
+    );
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 0.9rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.catalog-banner-placeholder::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 42%;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--ink) 0%, transparent),
+      color-mix(in srgb, var(--ink) 24%, transparent)
+    );
+  pointer-events: none;
+}
+
+.catalog-banner-placeholder img {
+  position: absolute;
+  width: min(72%, 12.2rem);
+  opacity: 0.15;
+  filter: saturate(1.1);
+}
+
+.catalog-banner-placeholder span {
+  position: relative;
+  z-index: 1;
+  color: color-mix(in srgb, var(--ink) 74%, var(--brand-secondary) 26%);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.catalog-title-pill {
+  margin-top: -1rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 28%, transparent);
+  background: color-mix(in srgb, white 95%, var(--sand) 5%);
+  padding: 0.56rem 1.3rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.32rem, 6vw, 1.78rem);
+  font-weight: 700;
+  color: var(--brand-secondary);
+  text-align: center;
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--ink) 10%, transparent);
+}
+
+.catalog-grid {
+  margin-top: 0.16rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.58rem;
+}
+
+.catalog-product-card {
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  background: color-mix(in srgb, white 92%, var(--sand) 8%);
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--ink) 10%, transparent);
+  overflow: hidden;
+}
+
+.catalog-product-card.is-open {
+  grid-column: 1 / -1;
+}
+
+.catalog-product-toggle {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0.52rem;
+  text-align: left;
+}
+
+.catalog-product-media {
+  min-height: 6.2rem;
+  border-radius: 0.78rem;
+  border: 1px dashed color-mix(in srgb, var(--brand-secondary) 28%, transparent);
+  background:
+    linear-gradient(
+      146deg,
+      color-mix(in srgb, white 88%, var(--brand-soft) 12%),
+      color-mix(in srgb, white 78%, var(--sand) 22%)
+    );
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 0.52rem;
+}
+
+.catalog-product-media span {
+  color: color-mix(in srgb, var(--ink) 68%, var(--brand-secondary) 32%);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.catalog-product-body {
+  margin-top: 0.5rem;
+}
+
+.catalog-product-meta-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: color-mix(in srgb, var(--ink) 68%, var(--brand-secondary) 32%);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.catalog-product-body h4 {
+  margin-top: 0.34rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.02rem, 4.5vw, 1.3rem);
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.catalog-product-body p {
+  margin-top: 0.24rem;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.35;
+}
+
+.catalog-product-price-row {
+  margin-top: 0.38rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.42rem;
+}
+
+.catalog-product-price-row strong {
+  color: var(--brand-secondary);
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.catalog-product-price-row svg {
+  color: var(--brand-secondary);
+  transition: transform 180ms ease;
+}
+
+.catalog-product-card.is-open .catalog-product-price-row svg {
+  transform: rotate(180deg);
+}
+
+.catalog-share-btn {
+  width: calc(100% - 1.04rem);
+  margin: 0 0.52rem 0.52rem;
+  justify-content: center;
+}
+
+.catalog-product-details {
+  margin: 0 0.52rem 0.58rem;
+  border-radius: 0.78rem;
+  border: 1px solid color-mix(in srgb, var(--brand-secondary) 16%, transparent);
+  background:
+    linear-gradient(
+      152deg,
+      color-mix(in srgb, var(--brand-primary) 12%, white),
+      color-mix(in srgb, var(--brand-secondary) 10%, white)
+    );
+  padding: 0.58rem 0.62rem;
+}
+
+.catalog-product-details h5 {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-secondary);
+}
+
+.catalog-product-details ul {
+  margin: 0.48rem 0 0;
+  padding-left: 0.96rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.catalog-product-details li {
+  font-size: 0.75rem;
+  line-height: 1.36;
+  color: var(--surface-text);
 }
 
 .sheet-head {
@@ -1308,9 +1585,7 @@
   }
 
   .menu-sheet {
-    border-radius: 1.34rem;
-    margin-bottom: 0.7rem;
-    max-height: min(86svh, 760px);
+    min-height: calc(100svh - 1.8rem);
   }
 }
 
@@ -1325,6 +1600,14 @@
 
   .quick-card {
     min-height: auto;
+  }
+
+  .catalog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-product-card.is-open {
+    grid-column: auto;
   }
 }
 
