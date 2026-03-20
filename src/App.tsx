@@ -1,9 +1,16 @@
 ﻿import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowUpRight,
+  BadgeCheck,
+  CakeSlice,
+  CalendarClock,
   ChevronDown,
   Clock3,
+  Croissant,
+  CupSoda,
+  Candy,
   House,
+  IceCreamCone,
   MapPin,
   MapPinned,
   MenuSquare,
@@ -13,6 +20,7 @@ import {
   Share2,
   Sparkles,
   Star,
+  Sunrise,
   UtensilsCrossed,
   X,
   type LucideIcon,
@@ -46,6 +54,17 @@ const dockItems: DockItem[] = [
 const categoryLookup = new Map(
   menuCategories.map((category) => [category.id, category]),
 )
+
+const menuCategoryIcons: Record<Category['id'], LucideIcon> = {
+  desayunos: Sunrise,
+  brunch: Croissant,
+  helados: IceCreamCone,
+  postres: Candy,
+  'tortas-porcion': CakeSlice,
+  bebidas: CupSoda,
+  recomendados: BadgeCheck,
+  temporada: CalendarClock,
+}
 
 const productLookup = new Map(
   menuCategories.flatMap((category) =>
@@ -692,16 +711,23 @@ function App() {
             />
 
             <div className="menu-choice-list">
-              {menuCategories.map((category) => (
-                <button
-                  key={category.id}
-                  type="button"
-                  className="menu-choice-pill"
-                  onClick={() => handleMenuCategoryPick(category.id)}
-                >
-                  {category.title}
-                </button>
-              ))}
+              {menuCategories.map((category) => {
+                const CategoryIcon = menuCategoryIcons[category.id]
+
+                return (
+                  <button
+                    key={category.id}
+                    type="button"
+                    className="menu-choice-pill"
+                    onClick={() => handleMenuCategoryPick(category.id)}
+                  >
+                    <span className="menu-choice-pill-icon" aria-hidden="true">
+                      <CategoryIcon size={20} />
+                    </span>
+                    <span className="menu-choice-pill-label">{category.title}</span>
+                  </button>
+                )
+              })}
             </div>
           </section>
         </div>
