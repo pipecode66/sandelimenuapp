@@ -225,41 +225,44 @@ function App() {
 
   return (
     <>
-      <div className="app-bg" />
-      <div className="phone-shell">
+      <div className={`app-bg ${isEntryOpen ? 'is-entry' : ''}`} />
+      <div className={`phone-shell ${isEntryOpen ? 'is-entry' : ''}`}>
         {isEntryOpen ? (
           <section className="entry-screen">
-            <img src="/assets/logo.png" alt="Logo principal de Sandeli" />
-            <div className="entry-grid" aria-label="Accesos iniciales">
-              <button
-                type="button"
-                className="entry-tile"
-                onClick={() => handleEntrySelect('menu')}
-              >
-                Menu
-              </button>
-              <button
-                type="button"
-                className="entry-tile"
-                onClick={() => handleEntrySelect('find-us')}
-              >
-                Encuentranos
-              </button>
-              <button
-                type="button"
-                className="entry-tile"
-                onClick={() => handleEntrySelect('feedback')}
-              >
-                Danos tu opinion
-              </button>
-              <button
-                type="button"
-                className="entry-tile"
-                onClick={() => handleEntrySelect('whatsapp')}
-              >
-                WhatsApp
-              </button>
+            <div className="entry-core">
+              <img src="/assets/logo.png" alt="Logo principal de Sandeli" />
+              <div className="entry-grid" aria-label="Accesos iniciales">
+                <button
+                  type="button"
+                  className="entry-tile"
+                  onClick={() => handleEntrySelect('menu')}
+                >
+                  Menú
+                </button>
+                <button
+                  type="button"
+                  className="entry-tile"
+                  onClick={() => handleEntrySelect('feedback')}
+                >
+                  Danos tu opinión
+                </button>
+                <button
+                  type="button"
+                  className="entry-tile"
+                  onClick={() => handleEntrySelect('find-us')}
+                >
+                  Encuéntranos
+                </button>
+                <button
+                  type="button"
+                  className="entry-tile"
+                  onClick={() => handleEntrySelect('whatsapp')}
+                >
+                  WhatsApp
+                </button>
+              </div>
             </div>
+            <p className="entry-privacy">Preferencias cookies y privacidad de datos</p>
           </section>
         ) : (
           <>
