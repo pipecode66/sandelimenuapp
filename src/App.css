@@ -924,8 +924,8 @@
   min-height: 4.3rem;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 0.76rem;
+  justify-content: center;
+  gap: 0.66rem;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--brand-primary) 40%, transparent);
   background:
@@ -940,7 +940,7 @@
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: 0.01em;
-  padding: 0.58rem 0.72rem 0.58rem 0.62rem;
+  padding: 0.58rem 0.9rem;
   text-align: left;
   cursor: pointer;
   box-shadow:
@@ -949,27 +949,25 @@
   animation: menu-pill-in 520ms ease both;
 }
 
-.menu-choice-pill-icon {
-  width: 2.34rem;
-  height: 2.34rem;
+.menu-choice-pill::after {
+  content: '';
+  width: 1.8rem;
+  height: 1.8rem;
   flex: 0 0 auto;
-  border-radius: 999px;
+}
+
+.menu-choice-pill-icon {
+  width: 1.8rem;
+  height: 1.8rem;
+  flex: 0 0 auto;
   display: grid;
   place-items: center;
-  background:
-    linear-gradient(
-      146deg,
-      color-mix(in srgb, var(--brand-primary) 92%, black),
-      color-mix(in srgb, var(--brand-secondary) 84%, black)
-    );
-  color: #ffffff;
-  box-shadow:
-    0 6px 14px color-mix(in srgb, var(--brand-secondary) 34%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.38);
+  color: color-mix(in srgb, var(--brand-primary) 78%, var(--brand-secondary) 22%);
 }
 
 .menu-choice-pill-label {
   flex: 1 1 auto;
+  text-align: center;
 }
 
 .menu-choice-pill:hover .menu-choice-pill-icon,
