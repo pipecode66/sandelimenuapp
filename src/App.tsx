@@ -26,6 +26,7 @@ import {
 } from './data/menuData'
 
 type AppView = 'home' | 'feedback' | 'find-us' | 'whatsapp'
+type EntryTarget = 'menu' | AppView
 
 type DockItem = {
   id: AppView
@@ -60,6 +61,7 @@ const createWhatsAppHref = (phone: string, message: string) =>
   `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
 
 function App() {
+  const [isEntryOpen, setIsEntryOpen] = useState(true)
   const [activeView, setActiveView] = useState<AppView>('home')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activeCategoryId, setActiveCategoryId] = useState(menuCategories[0].id)
@@ -115,6 +117,18 @@ function App() {
 
   const handleProductToggle = (productId: string) => {
     setExpandedProductId((current) => (current === productId ? null : productId))
+  }
+
+  const handleEntrySelect = (target: EntryTarget) => {
+    setIsEntryOpen(false)
+
+    if (target === 'menu') {
+      setActiveView('home')
+      openMenu()
+      return
+    }
+
+    setActiveView(target)
   }
 
   const handleWhatsAppAccess = () => {
@@ -213,297 +227,343 @@ function App() {
     <>
       <div className="app-bg" />
       <div className="phone-shell">
-        <header className="top-bar">
-          <div className="brand-mini">
-            <img src="/assets/logoIOS.png" alt="" aria-hidden="true" />
-            <div>
-              <p>Sandeli</p>
-              <span>Sano y delicioso</span>
+        {isEntryOpen ? (
+          <section className="entry-screen">
+            <img src="/assets/logo.png" alt="Logo principal de Sandeli" />
+            <div className="entry-grid" aria-label="Accesos iniciales">
+              <button
+                type="button"
+                className="entry-tile"
+                onClick={() => handleEntrySelect('menu')}
+              >
+                Menu
+              </button>
+              <button
+                type="button"
+                className="entry-tile"
+                onClick={() => handleEntrySelect('find-us')}
+              >
+                Encuentranos
+              </button>
+              <button
+                type="button"
+                className="entry-tile"
+                onClick={() => handleEntrySelect('feedback')}
+              >
+                Danos tu opinion
+              </button>
+              <button
+                type="button"
+                className="entry-tile"
+                onClick={() => handleEntrySelect('whatsapp')}
+              >
+                WhatsApp
+              </button>
             </div>
-          </div>
-
-          <button type="button" className="menu-trigger" onClick={() => openMenu()}>
-            <MenuSquare size={17} />
-            Menu
-          </button>
-        </header>
-
-        <main className="screen">
-          {activeView === 'home' ? (
-            <section className="view-home">
-              <article className="hero-card">
-                <span className="hero-pill">
-                  <Sparkles size={14} />
-                  Cocina saludable
-                </span>
-                <img
-                  className="hero-logo"
-                  src="/assets/logo.png"
-                  alt="Logo principal de Sandeli"
-                />
-                <p>
-                  Menu digital pensado para celular: rapido, visual y facil de
-                  explorar.
-                </p>
-              </article>
-
-              <article className="stats-strip">
+          </section>
+        ) : (
+          <>
+            <header className="top-bar">
+              <div className="brand-mini">
+                <img src="/assets/logoIOS.png" alt="" aria-hidden="true" />
                 <div>
-                  <strong>{menuCategories.length}</strong>
-                  <span>Categorias</span>
+                  <p>Sandeli</p>
+                  <span>Sano y delicioso</span>
                 </div>
-                <div>
-                  <strong>{totalProducts}</strong>
-                  <span>Productos</span>
-                </div>
-                <div>
-                  <strong>1 tap</strong>
-                  <span>WhatsApp</span>
-                </div>
-              </article>
+              </div>
 
-              <section className="quick-grid" aria-label="Accesos principales">
-                <button
-                  type="button"
-                  className="quick-card quick-card-main"
-                  onClick={() => openMenu()}
-                >
-                  <span className="quick-icon">
-                    <MenuSquare size={18} />
-                  </span>
-                  <h3>Menu</h3>
-                  <p>Categoria, detalle expandible y compartir producto.</p>
-                </button>
+              <button
+                type="button"
+                className="menu-trigger"
+                onClick={() => openMenu()}
+              >
+                <MenuSquare size={17} />
+                Menu
+              </button>
+            </header>
 
-                <button
-                  type="button"
-                  className="quick-card"
-                  onClick={() => setActiveView('feedback')}
-                >
-                  <span className="quick-icon">
-                    <MessageCircleHeart size={18} />
-                  </span>
-                  <h3>Danos tu opinion</h3>
-                  <p>Rating de estrellas y seleccion rapida.</p>
-                </button>
-
-                <button
-                  type="button"
-                  className="quick-card"
-                  onClick={() => setActiveView('find-us')}
-                >
-                  <span className="quick-icon">
-                    <MapPinned size={18} />
-                  </span>
-                  <h3>Encuentranos</h3>
-                  <p>Direccion, telefono, horarios y Google Maps.</p>
-                </button>
-
-                <button
-                  type="button"
-                  className={`quick-card ${!whatsappReady ? 'is-muted' : ''}`}
-                  onClick={handleWhatsAppAccess}
-                >
-                  <span className="quick-icon">
-                    <MessageCircleMore size={18} />
-                  </span>
-                  <h3>WhatsApp</h3>
-                  <p>
-                    {whatsappReady
-                      ? 'Chat directo con Sandeli.'
-                      : 'Canal listo para activar.'}
-                  </p>
-                </button>
-              </section>
-            </section>
-          ) : null}
-
-          {activeView === 'feedback' ? (
-            <section className="view-panel">
-              <header className="panel-head">
-                <span className="panel-kicker">Danos tu opinion</span>
-                <h2>Como te fue hoy?</h2>
-                <p>Solo seleccion, sin texto libre.</p>
-              </header>
-
-              <div className="rating-row">
-                {[1, 2, 3, 4, 5].map((score) => (
-                  <button
-                    key={score}
-                    type="button"
-                    className={`star-btn ${selectedRating >= score ? 'is-on' : ''}`}
-                    onClick={() => setSelectedRating(score)}
-                    aria-label={`${score} estrellas`}
-                  >
-                    <Star
-                      size={20}
-                      strokeWidth={1.7}
-                      fill={selectedRating >= score ? 'currentColor' : 'none'}
+            <main className="screen">
+              {activeView === 'home' ? (
+                <section className="view-home">
+                  <article className="hero-card">
+                    <span className="hero-pill">
+                      <Sparkles size={14} />
+                      Cocina saludable
+                    </span>
+                    <img
+                      className="hero-logo"
+                      src="/assets/logo.png"
+                      alt="Logo principal de Sandeli"
                     />
-                  </button>
-                ))}
-                <span className="rating-tag">{ratingLabel}</span>
-              </div>
+                    <p>
+                      Menu digital pensado para celular: rapido, visual y facil
+                      de explorar.
+                    </p>
+                  </article>
 
-              <div className="tag-grid">
-                {feedbackTags.map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    className={`choice-chip ${
-                      selectedTags.includes(tag) ? 'is-selected' : ''
-                    }`}
-                    onClick={() => toggleFeedbackTag(tag)}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
+                  <article className="stats-strip">
+                    <div>
+                      <strong>{menuCategories.length}</strong>
+                      <span>Categorias</span>
+                    </div>
+                    <div>
+                      <strong>{totalProducts}</strong>
+                      <span>Productos</span>
+                    </div>
+                    <div>
+                      <strong>1 tap</strong>
+                      <span>WhatsApp</span>
+                    </div>
+                  </article>
 
-              <div className="feedback-options">
-                {feedbackOptions.map((option) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    className={`feedback-tile ${
-                      selectedFeedbackId === option.id ? 'is-selected' : ''
-                    }`}
-                    onClick={() => setSelectedFeedbackId(option.id)}
-                  >
-                    <strong>{option.label}</strong>
-                    <p>{option.note}</p>
-                  </button>
-                ))}
-              </div>
+                  <section className="quick-grid" aria-label="Accesos principales">
+                    <button
+                      type="button"
+                      className="quick-card quick-card-main"
+                      onClick={() => openMenu()}
+                    >
+                      <span className="quick-icon">
+                        <MenuSquare size={18} />
+                      </span>
+                      <h3>Menu</h3>
+                      <p>Categoria, detalle expandible y compartir producto.</p>
+                    </button>
 
-              <div className="status-note">
-                <Sparkles size={16} />
-                <p>
-                  {selectedFeedback
-                    ? `Registro: ${selectedFeedback.label}.`
-                    : 'Selecciona una opcion para registrar la satisfaccion.'}
-                </p>
-              </div>
-            </section>
-          ) : null}
+                    <button
+                      type="button"
+                      className="quick-card"
+                      onClick={() => setActiveView('feedback')}
+                    >
+                      <span className="quick-icon">
+                        <MessageCircleHeart size={18} />
+                      </span>
+                      <h3>Danos tu opinion</h3>
+                      <p>Rating de estrellas y seleccion rapida.</p>
+                    </button>
 
-          {activeView === 'find-us' ? (
-            <section className="view-panel">
-              <header className="panel-head">
-                <span className="panel-kicker">Encuentranos</span>
-                <h2>Visitanos en Cucuta</h2>
-              </header>
+                    <button
+                      type="button"
+                      className="quick-card"
+                      onClick={() => setActiveView('find-us')}
+                    >
+                      <span className="quick-icon">
+                        <MapPinned size={18} />
+                      </span>
+                      <h3>Encuentranos</h3>
+                      <p>Direccion, telefono, horarios y Google Maps.</p>
+                    </button>
 
-              <article className="info-card">
-                <div className="info-head">
-                  <MapPinned size={16} />
-                  Direccion
-                </div>
-                <p>{businessInfo.address}</p>
-                <a
-                  className="text-link"
-                  href={businessInfo.mapsUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Abrir en Google Maps
-                  <ArrowUpRight size={15} />
-                </a>
-              </article>
+                    <button
+                      type="button"
+                      className={`quick-card ${!whatsappReady ? 'is-muted' : ''}`}
+                      onClick={handleWhatsAppAccess}
+                    >
+                      <span className="quick-icon">
+                        <MessageCircleMore size={18} />
+                      </span>
+                      <h3>WhatsApp</h3>
+                      <p>
+                        {whatsappReady
+                          ? 'Chat directo con Sandeli.'
+                          : 'Canal listo para activar.'}
+                      </p>
+                    </button>
+                  </section>
+                </section>
+              ) : null}
 
-              <article className="info-card">
-                <div className="info-head">
-                  <Phone size={16} />
-                  Telefono
-                </div>
-                <p>{businessInfo.phoneDisplay}</p>
-                <a className="text-link" href={businessInfo.phoneHref}>
-                  Llamar ahora
-                  <ArrowUpRight size={15} />
-                </a>
-              </article>
+              {activeView === 'feedback' ? (
+                <section className="view-panel">
+                  <header className="panel-head">
+                    <span className="panel-kicker">Danos tu opinion</span>
+                    <h2>Como te fue hoy?</h2>
+                    <p>Solo seleccion, sin texto libre.</p>
+                  </header>
 
-              <article className="info-card">
-                <div className="info-head">
-                  <Clock3 size={16} />
-                  Horarios
-                </div>
-                <ul className="hours-list">
-                  {businessInfo.hours.map((entry) => (
-                    <li key={entry.day}>
-                      <span>{entry.day}</span>
-                      <strong>{entry.time}</strong>
-                    </li>
-                  ))}
-                </ul>
-              </article>
+                  <div className="rating-row">
+                    {[1, 2, 3, 4, 5].map((score) => (
+                      <button
+                        key={score}
+                        type="button"
+                        className={`star-btn ${
+                          selectedRating >= score ? 'is-on' : ''
+                        }`}
+                        onClick={() => setSelectedRating(score)}
+                        aria-label={`${score} estrellas`}
+                      >
+                        <Star
+                          size={20}
+                          strokeWidth={1.7}
+                          fill={selectedRating >= score ? 'currentColor' : 'none'}
+                        />
+                      </button>
+                    ))}
+                    <span className="rating-tag">{ratingLabel}</span>
+                  </div>
 
-              <article className="map-frame">
-                <iframe
-                  title="Ubicacion de Sandeli en Google Maps"
-                  src={businessInfo.mapEmbedUrl}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </article>
-            </section>
-          ) : null}
+                  <div className="tag-grid">
+                    {feedbackTags.map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        className={`choice-chip ${
+                          selectedTags.includes(tag) ? 'is-selected' : ''
+                        }`}
+                        onClick={() => toggleFeedbackTag(tag)}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
 
-          {activeView === 'whatsapp' ? (
-            <section className="view-panel">
-              <header className="panel-head">
-                <span className="panel-kicker">WhatsApp</span>
-                <h2>Canal de atencion</h2>
-                <p>Variable lista para activar numero oficial.</p>
-              </header>
+                  <div className="feedback-options">
+                    {feedbackOptions.map((option) => (
+                      <button
+                        key={option.id}
+                        type="button"
+                        className={`feedback-tile ${
+                          selectedFeedbackId === option.id ? 'is-selected' : ''
+                        }`}
+                        onClick={() => setSelectedFeedbackId(option.id)}
+                      >
+                        <strong>{option.label}</strong>
+                        <p>{option.note}</p>
+                      </button>
+                    ))}
+                  </div>
 
-              <article className="wa-card">
-                <span className="wa-state">
-                  {whatsappReady ? 'Activo' : 'Pendiente de numero'}
-                </span>
-                <h3>Habla directo con Sandeli</h3>
-                <p>
-                  {whatsappReady
-                    ? 'Abre el chat con mensaje inicial listo para enviar.'
-                    : 'Comparte el numero y se activa de inmediato.'}
-                </p>
+                  <div className="status-note">
+                    <Sparkles size={16} />
+                    <p>
+                      {selectedFeedback
+                        ? `Registro: ${selectedFeedback.label}.`
+                        : 'Selecciona una opcion para registrar la satisfaccion.'}
+                    </p>
+                  </div>
+                </section>
+              ) : null}
 
-                {whatsappReady ? (
-                  <a
-                    className="cta-main"
-                    href={createWhatsAppHref(
-                      businessInfo.whatsappPhone,
-                      businessInfo.whatsappMessage,
+              {activeView === 'find-us' ? (
+                <section className="view-panel">
+                  <header className="panel-head">
+                    <span className="panel-kicker">Encuentranos</span>
+                    <h2>Visitanos en Cucuta</h2>
+                  </header>
+
+                  <article className="info-card">
+                    <div className="info-head">
+                      <MapPinned size={16} />
+                      Direccion
+                    </div>
+                    <p>{businessInfo.address}</p>
+                    <a
+                      className="text-link"
+                      href={businessInfo.mapsUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Abrir en Google Maps
+                      <ArrowUpRight size={15} />
+                    </a>
+                  </article>
+
+                  <article className="info-card">
+                    <div className="info-head">
+                      <Phone size={16} />
+                      Telefono
+                    </div>
+                    <p>{businessInfo.phoneDisplay}</p>
+                    <a className="text-link" href={businessInfo.phoneHref}>
+                      Llamar ahora
+                      <ArrowUpRight size={15} />
+                    </a>
+                  </article>
+
+                  <article className="info-card">
+                    <div className="info-head">
+                      <Clock3 size={16} />
+                      Horarios
+                    </div>
+                    <ul className="hours-list">
+                      {businessInfo.hours.map((entry) => (
+                        <li key={entry.day}>
+                          <span>{entry.day}</span>
+                          <strong>{entry.time}</strong>
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
+
+                  <article className="map-frame">
+                    <iframe
+                      title="Ubicacion de Sandeli en Google Maps"
+                      src={businessInfo.mapEmbedUrl}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  </article>
+                </section>
+              ) : null}
+
+              {activeView === 'whatsapp' ? (
+                <section className="view-panel">
+                  <header className="panel-head">
+                    <span className="panel-kicker">WhatsApp</span>
+                    <h2>Canal de atencion</h2>
+                    <p>Variable lista para activar numero oficial.</p>
+                  </header>
+
+                  <article className="wa-card">
+                    <span className="wa-state">
+                      {whatsappReady ? 'Activo' : 'Pendiente de numero'}
+                    </span>
+                    <h3>Habla directo con Sandeli</h3>
+                    <p>
+                      {whatsappReady
+                        ? 'Abre el chat con mensaje inicial listo para enviar.'
+                        : 'Comparte el numero y se activa de inmediato.'}
+                    </p>
+
+                    {whatsappReady ? (
+                      <a
+                        className="cta-main"
+                        href={createWhatsAppHref(
+                          businessInfo.whatsappPhone,
+                          businessInfo.whatsappMessage,
+                        )}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Abrir WhatsApp
+                        <ArrowUpRight size={16} />
+                      </a>
+                    ) : (
+                      <button type="button" className="cta-soft is-disabled">
+                        Esperando numero de WhatsApp
+                      </button>
                     )}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Abrir WhatsApp
-                    <ArrowUpRight size={16} />
-                  </a>
-                ) : (
-                  <button type="button" className="cta-soft is-disabled">
-                    Esperando numero de WhatsApp
-                  </button>
-                )}
-              </article>
-            </section>
-          ) : null}
-        </main>
+                  </article>
+                </section>
+              ) : null}
+            </main>
 
-        <nav className="bottom-dock" aria-label="Navegacion principal">
-          {dockItems.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={`dock-item ${activeView === item.id ? 'is-active' : ''}`}
-              onClick={() => setActiveView(item.id)}
-            >
-              <item.icon size={17} />
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </nav>
+            <nav className="bottom-dock" aria-label="Navegacion principal">
+              {dockItems.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`dock-item ${
+                    activeView === item.id ? 'is-active' : ''
+                  }`}
+                  onClick={() => setActiveView(item.id)}
+                >
+                  <item.icon size={17} />
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </nav>
+          </>
+        )}
       </div>
 
       {isMenuOpen ? (
