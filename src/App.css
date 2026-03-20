@@ -28,18 +28,18 @@
 .app-bg.is-entry::after {
   content: '';
   position: fixed;
-  width: clamp(14.5rem, 44vw, 20rem);
-  height: clamp(14.5rem, 44vw, 20rem);
+  width: clamp(17.2rem, 52vw, 24.5rem);
+  height: clamp(17.2rem, 52vw, 24.5rem);
   pointer-events: none;
   border-radius: 999px;
-  filter: blur(24px);
+  filter: blur(27px);
   z-index: -1;
   animation: neon-drift 7.6s ease-in-out infinite alternate;
 }
 
 .app-bg.is-entry::before {
-  top: -8.4rem;
-  right: -8.2rem;
+  top: -10.6rem;
+  right: -10.4rem;
   background: radial-gradient(
     circle,
     rgba(159, 31, 238, 0.54) 0%,
@@ -50,8 +50,8 @@
 }
 
 .app-bg.is-entry::after {
-  left: -8.4rem;
-  bottom: -8.6rem;
+  left: -10.8rem;
+  bottom: -10.9rem;
   background: radial-gradient(
     circle,
     rgba(164, 28, 130, 0.48) 0%,
