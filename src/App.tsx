@@ -4,6 +4,7 @@ import {
   ChevronDown,
   Clock3,
   House,
+  MapPin,
   MapPinned,
   MenuSquare,
   MessageCircleHeart,
@@ -12,6 +13,7 @@ import {
   Share2,
   Sparkles,
   Star,
+  UtensilsCrossed,
   X,
   type LucideIcon,
 } from 'lucide-react'
@@ -59,6 +61,29 @@ const productLookup = new Map(
 
 const createWhatsAppHref = (phone: string, message: string) =>
   `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+
+type WhatsAppLogoProps = {
+  size?: number
+  className?: string
+}
+
+function WhatsAppLogo({ size = 18, className }: WhatsAppLogoProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      className={className}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        fill="currentColor"
+        d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.14 6.44 2.14 11.9c0 1.74.45 3.44 1.31 4.95L2 22l5.29-1.39a9.86 9.86 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.44 9.9-9.9a9.85 9.85 0 0 0-2.9-7.01ZM12.05 20.2h-.01a8.28 8.28 0 0 1-4.21-1.15l-.3-.18-3.14.82.84-3.06-.2-.32a8.28 8.28 0 0 1-1.27-4.4c0-4.57 3.72-8.29 8.3-8.29 2.22 0 4.3.86 5.87 2.43a8.24 8.24 0 0 1 2.42 5.87c0 4.57-3.72 8.29-8.3 8.29Zm4.55-6.19c-.25-.13-1.48-.73-1.71-.81-.23-.08-.4-.13-.57.13-.17.25-.65.81-.8.97-.15.17-.3.19-.55.06-.25-.13-1.07-.39-2.03-1.25-.75-.67-1.25-1.5-1.4-1.75-.15-.25-.02-.38.11-.51.11-.11.25-.3.38-.45.13-.15.17-.25.25-.42.08-.17.04-.32-.02-.45-.06-.13-.57-1.37-.78-1.88-.21-.5-.43-.43-.57-.44h-.49c-.17 0-.45.06-.69.32-.23.25-.9.88-.9 2.14 0 1.25.92 2.47 1.05 2.64.13.17 1.8 2.75 4.35 3.85.61.26 1.08.42 1.45.54.61.19 1.17.16 1.61.1.49-.07 1.48-.6 1.69-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.29Z"
+      />
+    </svg>
+  )
+}
 
 function App() {
   const [isEntryOpen, setIsEntryOpen] = useState(true)
@@ -238,28 +263,8 @@ function App() {
                   onClick={() => handleEntrySelect('menu')}
                 >
                   <span className="entry-tile-inner">
-                    <MenuSquare size={18} />
+                    <UtensilsCrossed size={18} />
                     Menú
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="entry-tile"
-                  onClick={() => handleEntrySelect('feedback')}
-                >
-                  <span className="entry-tile-inner">
-                    <MessageCircleHeart size={18} />
-                    Danos tu opinión
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="entry-tile"
-                  onClick={() => handleEntrySelect('find-us')}
-                >
-                  <span className="entry-tile-inner">
-                    <MapPinned size={18} />
-                    Encuéntranos
                   </span>
                 </button>
                 <button
@@ -268,8 +273,28 @@ function App() {
                   onClick={() => handleEntrySelect('whatsapp')}
                 >
                   <span className="entry-tile-inner">
-                    <MessageCircleMore size={18} />
+                    <WhatsAppLogo size={18} />
                     WhatsApp
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="entry-tile"
+                  onClick={() => handleEntrySelect('find-us')}
+                >
+                  <span className="entry-tile-inner">
+                    <MapPin size={18} />
+                    Encuéntranos
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="entry-tile"
+                  onClick={() => handleEntrySelect('feedback')}
+                >
+                  <span className="entry-tile-inner">
+                    <Star size={18} />
+                    Danos tu opinión
                   </span>
                 </button>
               </div>

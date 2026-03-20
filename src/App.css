@@ -28,35 +28,35 @@
 .app-bg.is-entry::after {
   content: '';
   position: fixed;
-  width: clamp(17.2rem, 52vw, 24.5rem);
-  height: clamp(17.2rem, 52vw, 24.5rem);
+  width: clamp(22rem, 74vw, 34rem);
+  height: clamp(22rem, 74vw, 34rem);
   pointer-events: none;
   border-radius: 999px;
-  filter: blur(27px);
+  filter: blur(34px);
   z-index: -1;
   animation: neon-drift 7.6s ease-in-out infinite alternate;
 }
 
 .app-bg.is-entry::before {
-  top: -10.6rem;
-  right: -10.4rem;
+  top: -13.8rem;
+  right: -13.2rem;
   background: radial-gradient(
     circle,
-    rgba(159, 31, 238, 0.54) 0%,
-    rgba(164, 28, 130, 0.42) 38%,
-    rgba(159, 147, 231, 0.28) 60%,
+    rgba(159, 31, 238, 0.62) 0%,
+    rgba(164, 28, 130, 0.48) 38%,
+    rgba(159, 147, 231, 0.34) 62%,
     rgba(159, 31, 238, 0) 78%
   );
 }
 
 .app-bg.is-entry::after {
-  left: -10.8rem;
-  bottom: -10.9rem;
+  left: -14rem;
+  bottom: -14.2rem;
   background: radial-gradient(
     circle,
-    rgba(164, 28, 130, 0.48) 0%,
-    rgba(159, 31, 238, 0.38) 36%,
-    rgba(159, 147, 231, 0.34) 58%,
+    rgba(164, 28, 130, 0.58) 0%,
+    rgba(159, 31, 238, 0.44) 38%,
+    rgba(159, 147, 231, 0.38) 62%,
     rgba(159, 147, 231, 0) 80%
   );
   animation-delay: 0.7s;
@@ -1204,13 +1204,13 @@
 
 @keyframes neon-drift {
   from {
-    filter: blur(22px) saturate(1);
+    filter: blur(30px) saturate(1);
     transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.8;
+    opacity: 0.84;
   }
   to {
-    filter: blur(27px) saturate(1.15);
-    transform: translate3d(6px, 8px, 0) scale(1.07);
+    filter: blur(37px) saturate(1.22);
+    transform: translate3d(7px, 10px, 0) scale(1.1);
     opacity: 1;
   }
 }
