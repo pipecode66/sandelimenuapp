@@ -176,19 +176,21 @@
 }
 
 .entry-screen::before {
-  width: 12rem;
-  height: 12rem;
-  right: -3.2rem;
-  top: 1.5rem;
-  background: rgba(159, 31, 238, 0.22);
+  width: 14.5rem;
+  height: 14.5rem;
+  right: 0;
+  top: -0.8rem;
+  transform: translateX(52%);
+  background: rgba(159, 31, 238, 0.32);
 }
 
 .entry-screen::after {
-  width: 10.5rem;
-  height: 10.5rem;
-  left: -3.4rem;
-  bottom: 4.3rem;
-  background: rgba(164, 28, 130, 0.2);
+  width: 13.5rem;
+  height: 13.5rem;
+  left: 0;
+  bottom: 3.2rem;
+  transform: translateX(-52%);
+  background: rgba(164, 28, 130, 0.28);
 }
 
 .entry-core {
