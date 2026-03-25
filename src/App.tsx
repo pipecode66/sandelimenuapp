@@ -5,7 +5,6 @@ import {
   BadgeCheck,
   CakeSlice,
   CalendarClock,
-  ChevronDown,
   Clock3,
   Croissant,
   CupSoda,
@@ -67,6 +66,7 @@ const createWhatsAppHref = (phone: string, message: string) =>
 
 const menuRoutePath = '/menú'
 const menuRouteAlias = '/menu'
+const productClicksStorageKey = 'sandeli-product-clicks-v1'
 
 const normalizePathname = (pathname: string) => {
   try {
@@ -115,9 +115,30 @@ function App() {
   )
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activeCategoryId, setActiveCategoryId] = useState(menuCategories[0].id)
-  const [expandedProductId, setExpandedProductId] = useState<string | null>(
-    menuCategories[0]?.products[0]?.id ?? null,
-  )
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
+  const [productClickCounts, setProductClickCounts] = useState<
+    Record<string, number>
+  >(() => {
+    if (typeof window === 'undefined') return {}
+    try {
+      const stored = window.localStorage.getItem(productClicksStorageKey)
+      if (!stored) return {}
+      const parsed = JSON.parse(stored)
+      if (!parsed || typeof parsed !== 'object') return {}
+
+      return Object.entries(parsed).reduce<Record<string, number>>(
+        (accumulator, [productId, count]) => {
+          if (typeof count === 'number' && Number.isFinite(count) && count >= 0) {
+            accumulator[productId] = count
+          }
+          return accumulator
+        },
+        {},
+      )
+    } catch {
+      return {}
+    }
+  })
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(
     null,
   )
@@ -126,9 +147,33 @@ function App() {
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   const activeCategory = categoryLookup.get(activeCategoryId) ?? menuCategories[0]
+  const selectedProductEntry = selectedProductId
+    ? productLookup.get(selectedProductId) ?? null
+    : null
   const selectedFeedback =
     feedbackOptions.find((option) => option.id === selectedFeedbackId) ?? null
   const whatsappReady = Boolean(businessInfo.whatsappPhone)
+
+  const featuredProduct = useMemo(() => {
+    const [firstProduct] = activeCategory.products
+    if (!firstProduct) return null
+
+    let winner = firstProduct
+    let winnerClicks = productClickCounts[firstProduct.id] ?? 0
+
+    for (const product of activeCategory.products.slice(1)) {
+      const clicks = productClickCounts[product.id] ?? 0
+      if (clicks > winnerClicks) {
+        winner = product
+        winnerClicks = clicks
+      }
+    }
+
+    return {
+      product: winner,
+      clicks: winnerClicks,
+    }
+  }, [activeCategory, productClickCounts])
 
   const ratingLabel = useMemo(() => {
     if (selectedRating <= 1) return 'Basico'
@@ -139,19 +184,20 @@ function App() {
     return 'Sin calificacion'
   }, [selectedRating])
 
-  const focusCategory = (categoryId: string, productId?: string | null) => {
+  const focusCategory = (categoryId: string) => {
     const nextCategory = categoryLookup.get(categoryId) ?? menuCategories[0]
     setActiveCategoryId(nextCategory.id)
-    setExpandedProductId(productId ?? nextCategory.products[0]?.id ?? null)
   }
 
-  const openMenu = (categoryId = activeCategory.id, productId?: string) => {
-    focusCategory(categoryId, productId)
+  const openMenu = (categoryId = activeCategory.id) => {
+    focusCategory(categoryId)
+    setSelectedProductId(null)
     setIsMenuPickerOpen(false)
     setIsMenuOpen(true)
   }
 
   const backToMenuPicker = () => {
+    setSelectedProductId(null)
     setIsMenuOpen(false)
     setIsMenuPickerOpen(true)
   }
@@ -161,6 +207,7 @@ function App() {
     setIsMenuPickerOpen(true)
   }
   const closeMenuPicker = () => {
+    setSelectedProductId(null)
     setIsMenuPickerOpen(false)
     setIsEntryOpen(true)
   }
@@ -180,9 +227,14 @@ function App() {
     openMenu(categoryId)
   }
 
-  const handleProductToggle = (productId: string) => {
-    setExpandedProductId((current) => (current === productId ? null : productId))
+  const openProductDetail = (productId: string) => {
+    setSelectedProductId(productId)
+    setProductClickCounts((current) => ({
+      ...current,
+      [productId]: (current[productId] ?? 0) + 1,
+    }))
   }
+  const closeProductDetail = () => setSelectedProductId(null)
 
   const handleEntrySelect = (target: EntryTarget) => {
     if (target === 'menu') {
@@ -240,25 +292,42 @@ function App() {
   }, [toastMessage])
 
   useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        productClicksStorageKey,
+        JSON.stringify(productClickCounts),
+      )
+    } catch {
+      // Ignore storage write failures in private mode or restricted contexts.
+    }
+  }, [productClickCounts])
+
+  useEffect(() => {
     const previousOverflow = document.body.style.overflow
-    if (isMenuOpen || isMenuPickerOpen) document.body.style.overflow = 'hidden'
+    if (isMenuOpen || isMenuPickerOpen || Boolean(selectedProductEntry)) {
+      document.body.style.overflow = 'hidden'
+    }
     return () => {
       document.body.style.overflow = previousOverflow
     }
-  }, [isMenuOpen, isMenuPickerOpen])
+  }, [isMenuOpen, isMenuPickerOpen, selectedProductEntry])
 
   useEffect(() => {
-    if (!isMenuOpen && !isMenuPickerOpen) return undefined
+    if (!isMenuOpen && !isMenuPickerOpen && !selectedProductEntry) return undefined
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
+      if (selectedProductEntry) {
+        closeProductDetail()
+        return
+      }
       if (isMenuOpen) backToMenuPicker()
       if (isMenuPickerOpen) closeMenuPicker()
     }
 
     window.addEventListener('keydown', handleEscape)
     return () => window.removeEventListener('keydown', handleEscape)
-  }, [isMenuOpen, isMenuPickerOpen])
+  }, [isMenuOpen, isMenuPickerOpen, selectedProductEntry])
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '').trim()
@@ -266,8 +335,10 @@ function App() {
 
     const productMatch = productLookup.get(hash)
     if (productMatch) {
-      focusCategory(productMatch.category.id, productMatch.product.id)
+      focusCategory(productMatch.category.id)
       setIsMenuOpen(true)
+      setIsMenuPickerOpen(false)
+      setSelectedProductId(productMatch.product.id)
     }
   }, [])
 
@@ -275,11 +346,13 @@ function App() {
     const handlePopState = () => {
       if (isMenuRoute(window.location.pathname)) {
         setIsEntryOpen(false)
+        setSelectedProductId(null)
         setIsMenuOpen(false)
         setIsMenuPickerOpen(true)
         return
       }
 
+      setSelectedProductId(null)
       setIsMenuOpen(false)
       setIsMenuPickerOpen(false)
       setIsEntryOpen(true)
@@ -601,12 +674,6 @@ function App() {
                 <ArrowLeft size={16} />
                 Categorias
               </button>
-              <img
-                className="catalog-logo-mini"
-                src="/assets/logoIOS.png"
-                alt=""
-                aria-hidden="true"
-              />
             </header>
 
             <section className="catalog-hero">
@@ -622,62 +689,120 @@ function App() {
               <div className="catalog-title-pill">{activeCategory.title}</div>
             </section>
 
+            {featuredProduct ? (
+              <article className="catalog-featured">
+                <span className="catalog-featured-tag">Producto destacado</span>
+                <button
+                  type="button"
+                  className="catalog-featured-content"
+                  onClick={() => openProductDetail(featuredProduct.product.id)}
+                >
+                  <div className="catalog-featured-media" aria-hidden="true">
+                    <span>Imagen destacada</span>
+                  </div>
+                  <div className="catalog-featured-copy">
+                    <h3>{featuredProduct.product.name}</h3>
+                    <p>{featuredProduct.product.description}</p>
+                    <div className="catalog-featured-meta">
+                      <strong>{featuredProduct.product.price}</strong>
+                      <small>
+                        {featuredProduct.clicks > 0
+                          ? `${featuredProduct.clicks} clics en esta categoria`
+                          : 'Aun sin clics, destacado por Sandeli'}
+                      </small>
+                    </div>
+                  </div>
+                </button>
+              </article>
+            ) : null}
+
             <div className="catalog-grid">
-              {activeCategory.products.map((product) => {
-                const isExpanded = expandedProductId === product.id
-
-                return (
-                  <article
-                    key={product.id}
-                    className={`catalog-product-card ${isExpanded ? 'is-open' : ''}`}
+              {activeCategory.products.map((product) => (
+                <article key={product.id} className="catalog-product-card">
+                  <button
+                    type="button"
+                    className="catalog-product-toggle"
+                    onClick={() => openProductDetail(product.id)}
                   >
-                    <button
-                      type="button"
-                      className="catalog-product-toggle"
-                      onClick={() => handleProductToggle(product.id)}
-                      aria-expanded={isExpanded}
-                    >
-                      <div className="catalog-product-media" aria-hidden="true">
-                        <span>Imagen del producto</span>
+                    <div className="catalog-product-media" aria-hidden="true">
+                      <span>Imagen del producto</span>
+                    </div>
+
+                    <div className="catalog-product-body">
+                      <h4>{product.name}</h4>
+                      <p>{product.description}</p>
+
+                      <div className="catalog-product-price-row">
+                        <strong>{product.price}</strong>
+                        <span>Ver detalle</span>
                       </div>
+                    </div>
+                  </button>
 
-                      <div className="catalog-product-body">
-                        <span className="catalog-product-meta-line">
-                          <Clock3 size={14} />
-                          Sandeli saludable
-                        </span>
-                        <h4>{product.name}</h4>
-                        <p>{product.description}</p>
+                  <button
+                    type="button"
+                    className="share-btn catalog-share-btn"
+                    onClick={() => shareProduct(activeCategory, product)}
+                  >
+                    <Share2 size={15} />
+                    Compartir
+                  </button>
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
+      ) : null}
 
-                        <div className="catalog-product-price-row">
-                          <strong>{product.price}</strong>
-                          <ChevronDown size={17} />
-                        </div>
-                      </div>
-                    </button>
+      {selectedProductEntry ? (
+        <div className="product-view-backdrop" onClick={closeProductDetail}>
+          <section
+            className="product-view-modal"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="product-view-close"
+              onClick={closeProductDetail}
+              aria-label="Cerrar detalle del producto"
+            >
+              <X size={20} />
+            </button>
 
-                    <button
-                      type="button"
-                      className="share-btn catalog-share-btn"
-                      onClick={() => shareProduct(activeCategory, product)}
-                    >
-                      <Share2 size={15} />
-                      Compartir
-                    </button>
+            <div className="product-view-media" aria-hidden="true">
+              <img src="/assets/logo.png" alt="" />
+              <span>Imagen ampliada del producto</span>
+            </div>
 
-                    {isExpanded ? (
-                      <div className="catalog-product-details">
-                        <h5>Ingredientes</h5>
-                        <ul>
-                          {product.details.map((detail) => (
-                            <li key={detail}>{detail}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    ) : null}
-                  </article>
-                )
-              })}
+            <div className="product-view-content">
+              <span className="product-view-category">
+                {selectedProductEntry.category.title}
+              </span>
+              <h3>{selectedProductEntry.product.name}</h3>
+              <p>{selectedProductEntry.product.description}</p>
+
+              <ul>
+                {selectedProductEntry.product.details.map((detail) => (
+                  <li key={detail}>{detail}</li>
+                ))}
+              </ul>
+
+              <div className="product-view-footer">
+                <strong>{selectedProductEntry.product.price}</strong>
+                <button
+                  type="button"
+                  className="share-btn"
+                  onClick={() =>
+                    shareProduct(
+                      selectedProductEntry.category,
+                      selectedProductEntry.product,
+                    )
+                  }
+                >
+                  <Share2 size={15} />
+                  Compartir
+                </button>
+              </div>
             </div>
           </section>
         </div>
