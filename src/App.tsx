@@ -10,13 +10,9 @@ import {
   Croissant,
   CupSoda,
   Candy,
-  House,
   IceCreamCone,
   MapPin,
   MapPinned,
-  MenuSquare,
-  MessageCircleHeart,
-  MessageCircleMore,
   Phone,
   Share2,
   Sparkles,
@@ -36,21 +32,8 @@ import {
   type Product,
 } from './data/menuData'
 
-type AppView = 'home' | 'feedback' | 'find-us' | 'whatsapp'
+type AppView = 'feedback' | 'find-us' | 'whatsapp'
 type EntryTarget = 'menu' | AppView
-
-type DockItem = {
-  id: AppView
-  label: string
-  icon: LucideIcon
-}
-
-const dockItems: DockItem[] = [
-  { id: 'home', label: 'Inicio', icon: House },
-  { id: 'feedback', label: 'Opinion', icon: MessageCircleHeart },
-  { id: 'find-us', label: 'Encuentranos', icon: MapPinned },
-  { id: 'whatsapp', label: 'WhatsApp', icon: MessageCircleMore },
-]
 
 const categoryLookup = new Map(
   menuCategories.map((category) => [category.id, category]),
@@ -126,7 +109,7 @@ function WhatsAppLogo({ size = 18, className }: WhatsAppLogoProps) {
 
 function App() {
   const [isEntryOpen, setIsEntryOpen] = useState(() => !startsInMenuRoute())
-  const [activeView, setActiveView] = useState<AppView>('home')
+  const [activeView, setActiveView] = useState<AppView>('feedback')
   const [isMenuPickerOpen, setIsMenuPickerOpen] = useState(() =>
     startsInMenuRoute(),
   )
@@ -146,10 +129,6 @@ function App() {
   const selectedFeedback =
     feedbackOptions.find((option) => option.id === selectedFeedbackId) ?? null
   const whatsappReady = Boolean(businessInfo.whatsappPhone)
-  const totalProducts = menuCategories.reduce(
-    (count, category) => count + category.products.length,
-    0,
-  )
 
   const ratingLabel = useMemo(() => {
     if (selectedRating <= 1) return 'Basico'
@@ -178,11 +157,13 @@ function App() {
   }
   const openMenuPicker = () => {
     setIsEntryOpen(false)
-    setActiveView('home')
     setIsMenuOpen(false)
     setIsMenuPickerOpen(true)
   }
-  const closeMenuPicker = () => setIsMenuPickerOpen(false)
+  const closeMenuPicker = () => {
+    setIsMenuPickerOpen(false)
+    setIsEntryOpen(true)
+  }
 
   const pushMenuRoute = () => {
     if (typeof window === 'undefined') return
@@ -211,23 +192,6 @@ function App() {
 
     setIsEntryOpen(false)
     setActiveView(target)
-  }
-
-  const handleWhatsAppAccess = () => {
-    if (whatsappReady) {
-      window.open(
-        createWhatsAppHref(
-          businessInfo.whatsappPhone,
-          businessInfo.whatsappMessage,
-        ),
-        '_blank',
-        'noopener,noreferrer',
-      )
-      return
-    }
-
-    setActiveView('whatsapp')
-    setToastMessage('WhatsApp listo para activar cuando compartas el numero.')
   }
 
   const toggleFeedbackTag = (tag: string) => {
@@ -311,7 +275,6 @@ function App() {
     const handlePopState = () => {
       if (isMenuRoute(window.location.pathname)) {
         setIsEntryOpen(false)
-        setActiveView('home')
         setIsMenuOpen(false)
         setIsMenuPickerOpen(true)
         return
@@ -380,116 +343,26 @@ function App() {
             <p className="entry-privacy">Preferencias cookies y privacidad de datos</p>
           </section>
         ) : (
-          <>
-            <header className="top-bar">
-              <div className="brand-mini">
-                <img src="/assets/logoIOS.png" alt="" aria-hidden="true" />
-                <div>
-                  <p>Sandeli</p>
-                  <span>Sano y delicioso</span>
-                </div>
-              </div>
-
+          <section className="section-shell">
+            <header className="section-top">
               <button
                 type="button"
-                className="menu-trigger"
-                onClick={handleMenuAccess}
+                className="section-back"
+                onClick={() => setIsEntryOpen(true)}
               >
-                <MenuSquare size={17} />
-                Menu
+                <ArrowLeft size={16} />
+                Inicio
               </button>
+
+              <img
+                className="section-logo"
+                src="/assets/logoIOS.png"
+                alt=""
+                aria-hidden="true"
+              />
             </header>
 
-            <main className="screen">
-              {activeView === 'home' ? (
-                <section className="view-home">
-                  <article className="hero-card">
-                    <span className="hero-pill">
-                      <Sparkles size={14} />
-                      Cocina saludable
-                    </span>
-                    <img
-                      className="hero-logo"
-                      src="/assets/logo.png"
-                      alt="Logo principal de Sandeli"
-                    />
-                    <p>
-                      Menu digital pensado para celular: rapido, visual y facil
-                      de explorar.
-                    </p>
-                  </article>
-
-                  <article className="stats-strip">
-                    <div>
-                      <strong>{menuCategories.length}</strong>
-                      <span>Categorias</span>
-                    </div>
-                    <div>
-                      <strong>{totalProducts}</strong>
-                      <span>Productos</span>
-                    </div>
-                    <div>
-                      <strong>1 tap</strong>
-                      <span>WhatsApp</span>
-                    </div>
-                  </article>
-
-                  <section className="quick-grid" aria-label="Accesos principales">
-                    <button
-                      type="button"
-                      className="quick-card quick-card-main"
-                      onClick={handleMenuAccess}
-                    >
-                      <span className="quick-icon">
-                        <MenuSquare size={18} />
-                      </span>
-                      <h3>Menu</h3>
-                      <p>Categoria, detalle expandible y compartir producto.</p>
-                    </button>
-
-                    <button
-                      type="button"
-                      className="quick-card"
-                      onClick={() => setActiveView('feedback')}
-                    >
-                      <span className="quick-icon">
-                        <MessageCircleHeart size={18} />
-                      </span>
-                      <h3>Danos tu opinion</h3>
-                      <p>Rating de estrellas y seleccion rapida.</p>
-                    </button>
-
-                    <button
-                      type="button"
-                      className="quick-card"
-                      onClick={() => setActiveView('find-us')}
-                    >
-                      <span className="quick-icon">
-                        <MapPinned size={18} />
-                      </span>
-                      <h3>Encuentranos</h3>
-                      <p>Direccion, telefono, horarios y Google Maps.</p>
-                    </button>
-
-                    <button
-                      type="button"
-                      className={`quick-card ${!whatsappReady ? 'is-muted' : ''}`}
-                      onClick={handleWhatsAppAccess}
-                    >
-                      <span className="quick-icon">
-                        <MessageCircleMore size={18} />
-                      </span>
-                      <h3>WhatsApp</h3>
-                      <p>
-                        {whatsappReady
-                          ? 'Chat directo con Sandeli.'
-                          : 'Canal listo para activar.'}
-                      </p>
-                    </button>
-                  </section>
-                </section>
-              ) : null}
-
+            <main className="screen screen-section">
               {activeView === 'feedback' ? (
                 <section className="view-panel">
                   <header className="panel-head">
@@ -664,23 +537,7 @@ function App() {
                 </section>
               ) : null}
             </main>
-
-            <nav className="bottom-dock" aria-label="Navegacion principal">
-              {dockItems.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  className={`dock-item ${
-                    activeView === item.id ? 'is-active' : ''
-                  }`}
-                  onClick={() => setActiveView(item.id)}
-                >
-                  <item.icon size={17} />
-                  <span>{item.label}</span>
-                </button>
-              ))}
-            </nav>
-          </>
+          </section>
         )}
       </div>
 
