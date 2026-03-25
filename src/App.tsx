@@ -12,7 +12,6 @@ import {
   MapPin,
   MapPinned,
   Pizza,
-  Phone,
   Sandwich,
   Share2,
   Soup,
@@ -448,7 +447,9 @@ function App() {
           </section>
         ) : (
           <section className="section-shell">
-            <header className="section-top">
+            <header
+              className={`section-top ${activeView === 'find-us' ? 'no-logo' : ''}`}
+            >
               <button
                 type="button"
                 className="section-back"
@@ -458,12 +459,14 @@ function App() {
                 Inicio
               </button>
 
-              <img
-                className="section-logo"
-                src="/assets/logoIOS.png"
-                alt=""
-                aria-hidden="true"
-              />
+              {activeView === 'find-us' ? null : (
+                <img
+                  className="section-logo"
+                  src="/assets/logoIOS.png"
+                  alt=""
+                  aria-hidden="true"
+                />
+              )}
             </header>
 
             <main className="screen screen-section">
@@ -545,6 +548,15 @@ function App() {
                     <h2>Visitanos en Cucuta</h2>
                   </header>
 
+                  <article className="map-frame map-frame-large">
+                    <iframe
+                      title="Ubicacion de Sandeli en Google Maps"
+                      src={businessInfo.mapEmbedUrl}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  </article>
+
                   <article className="info-card">
                     <div className="info-head">
                       <MapPinned size={16} />
@@ -564,13 +576,18 @@ function App() {
 
                   <article className="info-card">
                     <div className="info-head">
-                      <Phone size={16} />
-                      Telefono
+                      <WhatsAppLogo size={16} />
+                      WhatsApp
                     </div>
-                    <p>{businessInfo.phoneDisplay}</p>
-                    <a className="text-link" href={businessInfo.phoneHref}>
-                      Llamar ahora
-                      <ArrowUpRight size={15} />
+                    <a
+                      className="cta-soft find-us-whatsapp"
+                      href={createWhatsAppHref(
+                        businessInfo.whatsappPhone,
+                        businessInfo.whatsappMessage,
+                      )}
+                    >
+                      Ir a WhatsApp
+                      <ArrowUpRight size={16} />
                     </a>
                   </article>
 
@@ -587,15 +604,6 @@ function App() {
                         </li>
                       ))}
                     </ul>
-                  </article>
-
-                  <article className="map-frame">
-                    <iframe
-                      title="Ubicacion de Sandeli en Google Maps"
-                      src={businessInfo.mapEmbedUrl}
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                    />
                   </article>
                 </section>
               ) : null}
