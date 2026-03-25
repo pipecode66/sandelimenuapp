@@ -32,7 +32,7 @@ import {
   type Product,
 } from './data/menuData'
 
-type AppView = 'feedback' | 'find-us' | 'whatsapp'
+type AppView = 'feedback' | 'find-us'
 type EntryTarget = 'menu' | AppView
 
 const categoryLookup = new Map(
@@ -72,8 +72,16 @@ const productLookup = new Map(
   ),
 )
 
+const normalizeWhatsAppPhone = (phone: string) => {
+  const digits = phone.replace(/\D/g, '')
+  if (digits.length === 10) return `57${digits}`
+  return digits
+}
+
 const createWhatsAppHref = (phone: string, message: string) =>
-  `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+  `https://wa.me/${normalizeWhatsAppPhone(phone)}?text=${encodeURIComponent(
+    message,
+  )}`
 
 const menuRoutePath = '/menú'
 const menuRouteAlias = '/menu'
@@ -166,7 +174,6 @@ function App() {
     : undefined
   const selectedFeedback =
     feedbackOptions.find((option) => option.id === selectedFeedbackId) ?? null
-  const whatsappReady = Boolean(businessInfo.whatsappPhone)
 
   const featuredProduct = useMemo(() => {
     const [firstProduct] = activeCategory.products
@@ -242,6 +249,13 @@ function App() {
 
   const handleMenuCategoryPick = (categoryId: string) => {
     openMenu(categoryId)
+  }
+
+  const handleWhatsAppAccess = () => {
+    if (typeof window === 'undefined') return
+    window.location.assign(
+      createWhatsAppHref(businessInfo.whatsappPhone, businessInfo.whatsappMessage),
+    )
   }
 
   const openProductDetail = (productId: string) => {
@@ -401,7 +415,7 @@ function App() {
                 <button
                   type="button"
                   className="entry-tile"
-                  onClick={() => handleEntrySelect('whatsapp')}
+                  onClick={handleWhatsAppAccess}
                 >
                   <span className="entry-tile-inner">
                     <WhatsAppLogo size={18} />
@@ -586,46 +600,6 @@ function App() {
                 </section>
               ) : null}
 
-              {activeView === 'whatsapp' ? (
-                <section className="view-panel">
-                  <header className="panel-head">
-                    <span className="panel-kicker">WhatsApp</span>
-                    <h2>Canal de atencion</h2>
-                    <p>Variable lista para activar numero oficial.</p>
-                  </header>
-
-                  <article className="wa-card">
-                    <span className="wa-state">
-                      {whatsappReady ? 'Activo' : 'Pendiente de numero'}
-                    </span>
-                    <h3>Habla directo con Sandeli</h3>
-                    <p>
-                      {whatsappReady
-                        ? 'Abre el chat con mensaje inicial listo para enviar.'
-                        : 'Comparte el numero y se activa de inmediato.'}
-                    </p>
-
-                    {whatsappReady ? (
-                      <a
-                        className="cta-main"
-                        href={createWhatsAppHref(
-                          businessInfo.whatsappPhone,
-                          businessInfo.whatsappMessage,
-                        )}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Abrir WhatsApp
-                        <ArrowUpRight size={16} />
-                      </a>
-                    ) : (
-                      <button type="button" className="cta-soft is-disabled">
-                        Esperando numero de WhatsApp
-                      </button>
-                    )}
-                  </article>
-                </section>
-              ) : null}
             </main>
           </section>
         )}

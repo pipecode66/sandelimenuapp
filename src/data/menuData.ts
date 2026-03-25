@@ -215,7 +215,7 @@ export const businessInfo = {
   address: 'Cl. 3 #0E-21, Barrio La Ceiba, Cucuta, Norte de Santander',
   phoneDisplay: '324 2773556',
   phoneHref: 'tel:+573242773556',
-  whatsappPhone: '',
+  whatsappPhone: '3242773556',
   whatsappMessage:
     'Hola Sandeli, me gustaria conocer el menu y recibir mas informacion.',
   hours: [
