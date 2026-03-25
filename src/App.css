@@ -779,14 +779,24 @@
   margin-top: 0.72rem;
   width: 100%;
   justify-content: center;
-  border-color: color-mix(in srgb, var(--brand-primary) 30%, transparent);
+  border-color: #1c9e4d;
   background:
     linear-gradient(
       145deg,
-      color-mix(in srgb, var(--brand-primary) 18%, white),
-      color-mix(in srgb, var(--brand-secondary) 16%, white)
+      #25d366 0%,
+      #21bf5b 50%,
+      #1ea84f 100%
     );
-  color: var(--brand-secondary);
+  color: #ffffff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.09);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 10px 20px rgba(30, 168, 79, 0.2);
+}
+
+.find-us-whatsapp .wa-pill-icon {
+  color: #ffffff;
+  flex-shrink: 0;
 }
 
 .wa-card {

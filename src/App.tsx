@@ -473,6 +473,7 @@ function App() {
                       businessInfo.whatsappMessage,
                     )}
                   >
+                    <WhatsAppLogo size={17} className="wa-pill-icon" />
                     Ir a WhatsApp
                     <ArrowUpRight size={16} />
                   </a>
