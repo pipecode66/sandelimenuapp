@@ -1276,6 +1276,20 @@
   box-shadow: 0 8px 18px color-mix(in srgb, var(--ink) 10%, transparent);
 }
 
+.catalog-section.has-divider {
+  margin-top: 0.72rem;
+}
+
+.catalog-subtitle-pill {
+  margin: 0 auto 0.16rem;
+  padding: 0.46rem 1.08rem;
+  font-size: clamp(1.06rem, 4.9vw, 1.38rem);
+}
+
+.catalog-section.has-divider .catalog-grid {
+  margin-top: 0.52rem;
+}
+
 .catalog-featured {
   margin-top: 0.2rem;
   border: 1px solid color-mix(in srgb, var(--brand-secondary) 18%, transparent);

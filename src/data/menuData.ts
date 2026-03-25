@@ -13,6 +13,13 @@ export type Category = {
   title: string
   blurb: string
   products: Product[]
+  sections?: CategorySection[]
+}
+
+export type CategorySection = {
+  id: string
+  title: string
+  products: Product[]
 }
 
 export type FeedbackOption = {
@@ -30,6 +37,13 @@ type CategorySeed = {
   id: string
   title: string
   blurb: string
+  products?: ProductSeed[]
+  sections?: SectionSeed[]
+}
+
+type SectionSeed = {
+  id: string
+  title: string
   products: ProductSeed[]
 }
 
@@ -44,8 +58,12 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
-const createProduct = (categoryId: string, seed: ProductSeed): Product => ({
-  id: `${categoryId}-${slugify(seed.name)}`,
+const createProduct = (
+  categoryId: string,
+  seed: ProductSeed,
+  sectionId?: string,
+): Product => ({
+  id: `${categoryId}-${sectionId ? `${sectionId}-` : ''}${slugify(seed.name)}`,
   name: seed.name,
   description: `Preparacion de ${seed.name} con estilo Sandeli.`,
   details: [
@@ -63,28 +81,84 @@ const categorySeeds: CategorySeed[] = [
     id: 'desayunos-brunch',
     title: 'Desayunos y Brunch',
     blurb: 'Opciones de desayuno y brunch con combinaciones de la casa.',
-    products: [
-      { name: 'Omelette Criollo', price: '$24.000' },
-      { name: 'Omelette de Carne Mechada', price: '$28.000' },
-      { name: 'Omelette de Pollo Mechado', price: '$26.000' },
-      { name: 'Omelette de Pollo Cremoso', price: '$29.000' },
-      { name: 'Omelette de Llanero', price: '$27.000' },
-      { name: 'Huevos Benedictinos', price: '$28.000' },
-      { name: 'Huevos Napolitanos', price: '$22.000' },
-      { name: 'Huevos Turcos', price: '$22.000' },
-      { name: 'Quesadilla de Pollo', price: '$27.000' },
-      { name: 'Desayuno de la Casa', price: '$26.000' },
-      { name: 'Desayuno Andino', price: '$26.000' },
-      { name: 'Desayuno Costeno', price: '$24.000' },
-      { name: 'Desayuno Americano', price: '$23.000' },
-      { name: 'Choripan', price: '$14.000' },
-      { name: 'Waffle de Queso', price: '$25.000' },
-      { name: 'Waffles Huevos Cremosos', price: '$23.000' },
-      { name: 'Waffles con frutas y Yogur Griego', price: '$24.000' },
-      { name: 'Waffles con frutas y Helado', price: '$29.000' },
-      { name: 'Pancake Pistacho', price: '$26.000' },
-      { name: 'Pancake Chocofruta', price: '$26.000' },
-      { name: 'Bowl de Frutos Rojos', price: '$25.000' },
+    sections: [
+      {
+        id: 'omelettes',
+        title: 'Omelettes',
+        products: [
+          { name: 'Omelette Criollo', price: '$24.000' },
+          { name: 'Omelette de Carne Mechada', price: '$28.000' },
+          { name: 'Omelette de Pollo Mechado', price: '$26.000' },
+          { name: 'Omelette de Pollo Cremoso', price: '$29.000' },
+          { name: 'Omelette de Llanero', price: '$27.000' },
+        ],
+      },
+      {
+        id: 'huevos-quesadillas',
+        title: 'Huevos & Quesadillas',
+        products: [
+          { name: 'Huevos Benedictinos', price: '$28.000' },
+          { name: 'Huevos Napolitanos', price: '$22.000' },
+          { name: 'Huevos Turcos', price: '$22.000' },
+          { name: 'Quesadilla de Pollo', price: '$27.000' },
+        ],
+      },
+      {
+        id: 'especiales',
+        title: 'Especiales',
+        products: [
+          { name: 'Desayuno de la Casa', price: '$26.000' },
+          { name: 'Desayuno Andino', price: '$26.000' },
+          { name: 'Desayuno Costeño', price: '$24.000' },
+          { name: 'Desayuno Americano', price: '$23.000' },
+          { name: 'Choripán', price: '$14.000' },
+        ],
+      },
+      {
+        id: 'waffles',
+        title: 'Waffles',
+        products: [
+          { name: 'Waffle de Queso', price: '$25.000' },
+          { name: 'Waffles Huevos Cremosos', price: '$23.000' },
+          { name: 'Waffles con frutas y Yogur Griego', price: '$24.000' },
+          { name: 'Waffles con frutas y Helado', price: '$29.000' },
+        ],
+      },
+      {
+        id: 'pancake-bowl',
+        title: 'Pancake & Bowl',
+        products: [
+          { name: 'Pancake Pistacho', price: '$26.000' },
+          { name: 'Pancake Chocofruta', price: '$26.000' },
+          { name: 'Bowl de Frutos Rojos', price: '$25.000' },
+        ],
+      },
+      {
+        id: 'arepas-maiz',
+        title: 'Arepas de Maíz',
+        products: [
+          { name: 'Mix de Queso', price: '$9.500' },
+          { name: 'Carne Mechada y Mix de Quesos', price: '$12.500' },
+          { name: 'Pollo Mechado y Mix de Quesos', price: '$12.500' },
+          { name: 'Solo Carne', price: '$16.000' },
+          { name: 'Solo Pollo', price: '$15.000' },
+          { name: 'Pollo Cremoso', price: '$16.000' },
+          { name: 'Mixta (Carne y Pollo)', price: '$16.000' },
+        ],
+      },
+      {
+        id: 'arepas-almendras',
+        title: 'Arepas de Almendras',
+        products: [
+          { name: 'Mix de Queso', price: '$13.000' },
+          { name: 'Carne Mechada y Mix de Quesos', price: '$16.000' },
+          { name: 'Pollo Mechado y Mix de Quesos', price: '$16.000' },
+          { name: 'Solo Carne', price: '$17.000' },
+          { name: 'Solo Pollo', price: '$17.000' },
+          { name: 'Pollo Cremoso', price: '$17.000' },
+          { name: 'Mixta (Carne y Pollo)', price: '$17.000' },
+        ],
+      },
     ],
   },
   {
@@ -189,12 +263,27 @@ const categorySeeds: CategorySeed[] = [
   },
 ]
 
-export const menuCategories: Category[] = categorySeeds.map((category) => ({
-  id: category.id,
-  title: category.title,
-  blurb: category.blurb,
-  products: category.products.map((product) => createProduct(category.id, product)),
-}))
+export const menuCategories: Category[] = categorySeeds.map((category) => {
+  const sections = category.sections?.map((section) => ({
+    id: section.id,
+    title: section.title,
+    products: section.products.map((product) =>
+      createProduct(category.id, product, section.id),
+    ),
+  }))
+
+  const products = sections
+    ? sections.flatMap((section) => section.products)
+    : (category.products ?? []).map((product) => createProduct(category.id, product))
+
+  return {
+    id: category.id,
+    title: category.title,
+    blurb: category.blurb,
+    products,
+    sections,
+  }
+})
 
 export const feedbackOptions: FeedbackOption[] = [
   {

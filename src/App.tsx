@@ -49,7 +49,7 @@ const menuCategoryIcons: Record<Category['id'], LucideIcon> = {
 const productImageOverrides: Partial<
   Record<Product['id'], { cardSrc: string; detailSrc: string }>
 > = {
-  'desayunos-brunch-omelette-criollo': {
+  'desayunos-brunch-omelettes-omelette-criollo': {
     cardSrc: '/assets/producto.png',
     detailSrc: '/assets/productoampliado.png',
   },
@@ -161,6 +161,17 @@ function App() {
   const selectedProductImageOverride = selectedProductEntry
     ? productImageOverrides[selectedProductEntry.product.id]
     : undefined
+  const activeCategorySections =
+    activeCategory.sections && activeCategory.sections.length > 0
+      ? activeCategory.sections
+      : [
+          {
+            id: `${activeCategory.id}-default`,
+            title: activeCategory.title,
+            products: activeCategory.products,
+          },
+        ]
+  const leadSectionTitle = activeCategorySections[0]?.title ?? activeCategory.title
 
   const featuredProduct = useMemo(() => {
     const [firstProduct] = activeCategory.products
@@ -581,7 +592,7 @@ function App() {
                 <span>Placeholder banner de categoria</span>
               </div>
 
-              <div className="catalog-title-pill">{activeCategory.title}</div>
+              <div className="catalog-title-pill">{leadSectionTitle}</div>
             </section>
 
             {featuredProduct ? (
@@ -618,56 +629,71 @@ function App() {
               </article>
             ) : null}
 
-            <div className="catalog-grid">
-              {activeCategory.products.map((product) => {
-                const productImageOverride = productImageOverrides[product.id]
+            {activeCategorySections.map((section, sectionIndex) => (
+              <section
+                key={section.id}
+                className={`catalog-section ${
+                  sectionIndex === 0 ? 'is-first' : 'has-divider'
+                }`}
+              >
+                {sectionIndex === 0 ? null : (
+                  <div className="catalog-title-pill catalog-subtitle-pill">
+                    {section.title}
+                  </div>
+                )}
 
-                return (
-                  <article key={product.id} className="catalog-product-card">
-                    <button
-                      type="button"
-                      className="catalog-product-toggle"
-                      onClick={() => openProductDetail(product.id)}
-                    >
-                      <div
-                        className={`catalog-product-media ${
-                          productImageOverride ? 'has-image' : ''
-                        }`}
-                      >
-                        {productImageOverride ? (
-                          <img
-                            src={productImageOverride.cardSrc}
-                            alt={`Imagen de ${product.name}`}
-                            loading="lazy"
-                          />
-                        ) : (
-                          <span>Imagen del producto</span>
-                        )}
-                      </div>
+                <div className="catalog-grid">
+                  {section.products.map((product) => {
+                    const productImageOverride = productImageOverrides[product.id]
 
-                      <div className="catalog-product-body">
-                        <h4>{product.name}</h4>
-                        <p>{product.description}</p>
+                    return (
+                      <article key={product.id} className="catalog-product-card">
+                        <button
+                          type="button"
+                          className="catalog-product-toggle"
+                          onClick={() => openProductDetail(product.id)}
+                        >
+                          <div
+                            className={`catalog-product-media ${
+                              productImageOverride ? 'has-image' : ''
+                            }`}
+                          >
+                            {productImageOverride ? (
+                              <img
+                                src={productImageOverride.cardSrc}
+                                alt={`Imagen de ${product.name}`}
+                                loading="lazy"
+                              />
+                            ) : (
+                              <span>Imagen del producto</span>
+                            )}
+                          </div>
 
-                        <div className="catalog-product-price-row">
-                          <strong>{product.price}</strong>
-                          <span>Ver detalle</span>
-                        </div>
-                      </div>
-                    </button>
+                          <div className="catalog-product-body">
+                            <h4>{product.name}</h4>
+                            <p>{product.description}</p>
 
-                    <button
-                      type="button"
-                      className="share-btn catalog-share-btn"
-                      onClick={() => shareProduct(activeCategory, product)}
-                    >
-                      <Share2 size={15} />
-                      Compartir
-                    </button>
-                  </article>
-                )
-              })}
-            </div>
+                            <div className="catalog-product-price-row">
+                              <strong>{product.price}</strong>
+                              <span>Ver detalle</span>
+                            </div>
+                          </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          className="share-btn catalog-share-btn"
+                          onClick={() => shareProduct(activeCategory, product)}
+                        >
+                          <Share2 size={15} />
+                          Compartir
+                        </button>
+                      </article>
+                    )
+                  })}
+                </div>
+              </section>
+            ))}
           </section>
         </div>
       ) : null}
