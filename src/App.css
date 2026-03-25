@@ -775,7 +775,7 @@
   min-height: clamp(16rem, 44vh, 21rem);
 }
 
-.find-us-whatsapp {
+.cta-soft.find-us-whatsapp {
   margin-top: 0.72rem;
   width: 100%;
   justify-content: center;
@@ -794,7 +794,19 @@
     0 10px 20px rgba(30, 168, 79, 0.2);
 }
 
-.find-us-whatsapp .wa-pill-icon {
+.cta-soft.find-us-whatsapp:hover,
+.cta-soft.find-us-whatsapp:focus-visible {
+  background:
+    linear-gradient(
+      145deg,
+      #20c55a 0%,
+      #1fb455 50%,
+      #1b9f4a 100%
+    );
+  color: #ffffff;
+}
+
+.cta-soft.find-us-whatsapp .wa-pill-icon {
   color: #ffffff;
   flex-shrink: 0;
 }
