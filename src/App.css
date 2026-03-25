@@ -1304,10 +1304,14 @@
 }
 
 .catalog-featured-meta strong {
+  display: inline-block;
   color: var(--brand-secondary);
-  font-size: clamp(1.24rem, 5.2vw, 1.54rem);
-  line-height: 1;
+  font-size: clamp(1.32rem, 5.6vw, 1.68rem);
+  line-height: 1.02;
   font-weight: 800;
+  letter-spacing: 0.016em;
+  transform: translateY(0.18rem) scaleX(1.06);
+  transform-origin: left center;
 }
 
 .catalog-grid {
