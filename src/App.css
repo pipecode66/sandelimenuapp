@@ -1297,20 +1297,14 @@
 
 .catalog-featured-meta {
   margin-top: 0.28rem;
-  display: grid;
-  gap: 0.12rem;
+  display: flex;
+  align-items: center;
 }
 
 .catalog-featured-meta strong {
   color: var(--brand-secondary);
-  font-size: 0.94rem;
+  font-size: 1rem;
   font-weight: 800;
-}
-
-.catalog-featured-meta small {
-  color: var(--surface-text);
-  font-size: 0.66rem;
-  line-height: 1.3;
 }
 
 .catalog-grid {
@@ -1321,7 +1315,7 @@
 }
 
 .catalog-product-card {
-  min-height: 20.8rem;
+  min-height: 18.95rem;
   display: flex;
   flex-direction: column;
   border-radius: 1rem;
@@ -1334,8 +1328,6 @@
 .catalog-product-toggle {
   width: 100%;
   flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -1344,7 +1336,10 @@
 }
 
 .catalog-product-media {
-  min-height: 8.9rem;
+  width: 100%;
+  margin-left: 0;
+  min-height: 8rem;
+  aspect-ratio: 4 / 3;
   border-radius: 0.78rem;
   border: 1px dashed color-mix(in srgb, var(--brand-secondary) 28%, transparent);
   background:
@@ -1367,9 +1362,6 @@
 
 .catalog-product-body {
   margin-top: 0.46rem;
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
 }
 
 .catalog-product-body h4 {
@@ -1396,8 +1388,7 @@
 }
 
 .catalog-product-price-row {
-  margin-top: auto;
-  padding-top: 0.36rem;
+  margin-top: 0.66rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1406,7 +1397,7 @@
 
 .catalog-product-price-row strong {
   color: var(--brand-secondary);
-  font-size: 0.92rem;
+  font-size: 1.1rem;
   font-weight: 800;
 }
 
@@ -1420,7 +1411,7 @@
 
 .catalog-share-btn {
   width: calc(100% - 1.04rem);
-  margin: 0 0.52rem 0.52rem;
+  margin: 0.36rem 0.52rem 0.52rem;
   justify-content: center;
 }
 
@@ -1474,7 +1465,9 @@
 }
 
 .product-view-media {
+  width: 100%;
   min-height: 13.2rem;
+  aspect-ratio: 16 / 10;
   border-radius: 1rem;
   border: 1px dashed color-mix(in srgb, var(--brand-primary) 32%, transparent);
   background:
@@ -1568,7 +1561,7 @@
 
 .product-view-footer strong {
   color: var(--brand-secondary);
-  font-size: 1.08rem;
+  font-size: 1.28rem;
   font-weight: 800;
 }
 

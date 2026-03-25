@@ -705,11 +705,6 @@ function App() {
                     <p>{featuredProduct.product.description}</p>
                     <div className="catalog-featured-meta">
                       <strong>{featuredProduct.product.price}</strong>
-                      <small>
-                        {featuredProduct.clicks > 0
-                          ? `${featuredProduct.clicks} clics en esta categoria`
-                          : 'Aun sin clics, destacado por Sandeli'}
-                      </small>
                     </div>
                   </div>
                 </button>
