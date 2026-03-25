@@ -228,7 +228,7 @@ export const businessInfo = {
     { day: 'jueves', time: '8 a.m. - 8 p.m.' },
   ],
   mapEmbedUrl:
-    'https://www.google.com/maps?q=Cl.%203%20%230E-21%2C%20Barrio%20La%20Ceiba%2C%20Cucuta%2C%20Norte%20de%20Santander&output=embed',
+    'https://www.google.com/maps?q=7.8951633,-72.4994668&z=19&output=embed',
   mapsUrl:
-    'https://www.google.com/maps/search/?api=1&query=Cl.%203%20%230E-21%2C%20Barrio%20La%20Ceiba%2C%20Cucuta%2C%20Norte%20de%20Santander',
+    'https://maps.app.goo.gl/UqnHT8SFSkmADAr8A',
 }
