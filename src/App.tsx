@@ -2,21 +2,22 @@
 import {
   ArrowLeft,
   ArrowUpRight,
-  BadgeCheck,
   CakeSlice,
-  CalendarClock,
   Clock3,
   Croissant,
-  CupSoda,
-  Candy,
-  IceCreamCone,
+  Egg,
+  EggFried,
+  ChefHat,
+  Hamburger,
   MapPin,
   MapPinned,
+  Pizza,
   Phone,
+  Sandwich,
   Share2,
+  Soup,
   Sparkles,
   Star,
-  Sunrise,
   UtensilsCrossed,
   X,
   type LucideIcon,
@@ -39,23 +40,15 @@ const categoryLookup = new Map(
 )
 
 const menuCategoryIcons: Record<Category['id'], LucideIcon> = {
-  desayunos: Sunrise,
-  brunch: Croissant,
-  helados: IceCreamCone,
-  postres: Candy,
-  'tortas-porcion': CakeSlice,
-  bebidas: CupSoda,
-  recomendados: BadgeCheck,
-  temporada: CalendarClock,
-}
-
-const productImageOverrides: Partial<
-  Record<Product['id'], { cardSrc: string; detailSrc: string }>
-> = {
-  'desayuno-bowl-amapola': {
-    cardSrc: '/assets/producto.png',
-    detailSrc: '/assets/productoampliado.png',
-  },
+  omelette: EggFried,
+  'huevos-quesadillas': Egg,
+  especiales: ChefHat,
+  waffles: Croissant,
+  'pancake-bowl': Soup,
+  sandwich: Sandwich,
+  'pizzas-keto': Pizza,
+  hamburguesas: Hamburger,
+  postres: CakeSlice,
 }
 
 const productLookup = new Map(
@@ -159,9 +152,6 @@ function App() {
   const selectedProductEntry = selectedProductId
     ? productLookup.get(selectedProductId) ?? null
     : null
-  const selectedProductImageOverride = selectedProductEntry
-    ? productImageOverrides[selectedProductEntry.product.id]
-    : undefined
   const selectedFeedback =
     feedbackOptions.find((option) => option.id === selectedFeedbackId) ?? null
   const whatsappReady = Boolean(businessInfo.whatsappPhone)
@@ -186,9 +176,6 @@ function App() {
       clicks: winnerClicks,
     }
   }, [activeCategory, productClickCounts])
-  const featuredProductImageOverride = featuredProduct
-    ? productImageOverrides[featuredProduct.product.id]
-    : undefined
 
   const ratingLabel = useMemo(() => {
     if (selectedRating <= 1) return 'Basico'
@@ -712,20 +699,8 @@ function App() {
                   className="catalog-featured-content"
                   onClick={() => openProductDetail(featuredProduct.product.id)}
                 >
-                  <div
-                    className={`catalog-featured-media ${
-                      featuredProductImageOverride ? 'has-image' : ''
-                    }`}
-                  >
-                    {featuredProductImageOverride ? (
-                      <img
-                        src={featuredProductImageOverride.cardSrc}
-                        alt={`Imagen de ${featuredProduct.product.name}`}
-                        loading="lazy"
-                      />
-                    ) : (
-                      <span>Imagen destacada</span>
-                    )}
+                  <div className="catalog-featured-media" aria-hidden="true">
+                    <span>Imagen destacada</span>
                   </div>
                   <div className="catalog-featured-copy">
                     <h3>{featuredProduct.product.name}</h3>
@@ -735,58 +710,42 @@ function App() {
                     </div>
                   </div>
                 </button>
-              </article>
+            </article>
             ) : null}
 
             <div className="catalog-grid">
-              {activeCategory.products.map((product) => {
-                const productImageOverride = productImageOverrides[product.id]
+              {activeCategory.products.map((product) => (
+                <article key={product.id} className="catalog-product-card">
+                  <button
+                    type="button"
+                    className="catalog-product-toggle"
+                    onClick={() => openProductDetail(product.id)}
+                  >
+                    <div className="catalog-product-media" aria-hidden="true">
+                      <span>Imagen del producto</span>
+                    </div>
 
-                return (
-                  <article key={product.id} className="catalog-product-card">
-                    <button
-                      type="button"
-                      className="catalog-product-toggle"
-                      onClick={() => openProductDetail(product.id)}
-                    >
-                      <div
-                        className={`catalog-product-media ${
-                          productImageOverride ? 'has-image' : ''
-                        }`}
-                      >
-                        {productImageOverride ? (
-                          <img
-                            src={productImageOverride.cardSrc}
-                            alt={`Imagen de ${product.name}`}
-                            loading="lazy"
-                          />
-                        ) : (
-                          <span>Imagen del producto</span>
-                        )}
+                    <div className="catalog-product-body">
+                      <h4>{product.name}</h4>
+                      <p>{product.description}</p>
+
+                      <div className="catalog-product-price-row">
+                        <strong>{product.price}</strong>
+                        <span>Ver detalle</span>
                       </div>
+                    </div>
+                  </button>
 
-                      <div className="catalog-product-body">
-                        <h4>{product.name}</h4>
-                        <p>{product.description}</p>
-
-                        <div className="catalog-product-price-row">
-                          <strong>{product.price}</strong>
-                          <span>Ver detalle</span>
-                        </div>
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      className="share-btn catalog-share-btn"
-                      onClick={() => shareProduct(activeCategory, product)}
-                    >
-                      <Share2 size={15} />
-                      Compartir
-                    </button>
-                  </article>
-                )
-              })}
+                  <button
+                    type="button"
+                    className="share-btn catalog-share-btn"
+                    onClick={() => shareProduct(activeCategory, product)}
+                  >
+                    <Share2 size={15} />
+                    Compartir
+                  </button>
+                </article>
+              ))}
             </div>
           </section>
         </div>
@@ -807,22 +766,9 @@ function App() {
               <X size={20} />
             </button>
 
-            <div
-              className={`product-view-media ${
-                selectedProductImageOverride ? 'has-image' : ''
-              }`}
-            >
-              {selectedProductImageOverride ? (
-                <img
-                  src={selectedProductImageOverride.detailSrc}
-                  alt={`Imagen ampliada de ${selectedProductEntry.product.name}`}
-                />
-              ) : (
-                <>
-                  <img src="/assets/logo.png" alt="" />
-                  <span>Imagen ampliada del producto</span>
-                </>
-              )}
+            <div className="product-view-media" aria-hidden="true">
+              <img src="/assets/logo.png" alt="" />
+              <span>Imagen ampliada del producto</span>
             </div>
 
             <div className="product-view-content">

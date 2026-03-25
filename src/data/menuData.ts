@@ -21,274 +21,164 @@ export type FeedbackOption = {
   note: string
 }
 
+type ProductSeed = {
+  name: string
+  price: string
+}
+
+type CategorySeed = {
+  id: string
+  title: string
+  blurb: string
+  products: ProductSeed[]
+}
+
 const defaultProductImage = '/assets/brand-board.jpeg'
 
-export const menuCategories: Category[] = [
+const slugify = (value: string) =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/&/g, ' y ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+const createProduct = (categoryId: string, seed: ProductSeed): Product => ({
+  id: `${categoryId}-${slugify(seed.name)}`,
+  name: seed.name,
+  description: `Preparacion de ${seed.name} con estilo Sandeli.`,
+  details: [
+    `Seleccion especial de ${seed.name}.`,
+    'Ingredientes y porciones sujetos a disponibilidad.',
+    'Puedes pedir recomendaciones y personalizacion en tienda.',
+  ],
+  price: seed.price,
+  imageSrc: defaultProductImage,
+  imageAlt: `Imagen de ${seed.name}`,
+})
+
+const categorySeeds: CategorySeed[] = [
   {
-    id: 'desayunos',
-    title: 'Desayunos',
-    blurb: 'Opciones saludables para arrancar el dia con energia.',
+    id: 'omelette',
+    title: 'Omelette',
+    blurb: 'Preparaciones de omelette con combinaciones de la casa.',
     products: [
-      {
-        id: 'desayuno-bowl-amapola',
-        name: 'Bowl amanecer de amapola',
-        description: 'Yogur griego, granola y frutas frescas.',
-        details: [
-          'Yogur griego natural con granola artesanal.',
-          'Frutas de temporada, chia y miel suave.',
-          'Semillas mixtas y coulis de frutos rojos.',
-        ],
-        price: '$18.900',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Bowl de desayuno saludable con frutas.',
-      },
-      {
-        id: 'desayuno-tostadas-campesinas',
-        name: 'Tostadas campesinas saludables',
-        description: 'Pan integral, huevos cremosos y brotes frescos.',
-        details: [
-          'Pan integral tostado con hummus de garbanzo.',
-          'Huevos revueltos cremosos y tomate confitado.',
-          'Brotes frescos y aceite de oliva especiado.',
-        ],
-        price: '$16.500',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Tostadas saludables con huevo y vegetales.',
-      },
+      { name: 'Omelette Criollo', price: '$24.000' },
+      { name: 'Omelette de Carne Mechada', price: '$28.000' },
+      { name: 'Omelette de Pollo Mechado', price: '$26.000' },
+      { name: 'Omelette de Pollo Cremoso', price: '$29.000' },
+      { name: 'Omelette de Llanero', price: '$27.000' },
     ],
   },
   {
-    id: 'brunch',
-    title: 'Brunch',
-    blurb: 'Platos de media manana con perfil balanceado.',
+    id: 'huevos-quesadillas',
+    title: 'Huevos & Quesadillas',
+    blurb: 'Recetas de huevos y quesadillas para empezar el dia.',
     products: [
-      {
-        id: 'brunch-waffle-proteico',
-        name: 'Waffle proteico de frutos rojos',
-        description: 'Waffle de avena con crema de yogur y berries.',
-        details: [
-          'Waffle de avena y vainilla.',
-          'Crema ligera de yogur, fresas y arandanos.',
-          'Mantequilla de mani y semillas crocantes.',
-        ],
-        price: '$22.900',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Waffle con topping de frutos rojos.',
-      },
-      {
-        id: 'brunch-croissant-caprese',
-        name: 'Croissant caprese brunch',
-        description: 'Croissant tibio con pesto, mozzarella y tomate.',
-        details: [
-          'Croissant horneado con pesto de albahaca.',
-          'Mozzarella fresca, tomate asado y hojas verdes.',
-          'Acompanado de ensalada citrica.',
-        ],
-        price: '$24.500',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Croissant estilo caprese.',
-      },
+      { name: 'Huevos Benedictinos', price: '$28.000' },
+      { name: 'Huevos Napolitanos', price: '$22.000' },
+      { name: 'Huevos Turcos', price: '$22.000' },
+      { name: 'Quesadilla de Pollo', price: '$27.000' },
     ],
   },
   {
-    id: 'helados',
-    title: 'Helados',
-    blurb: 'Alternativas frias y ligeras para refrescar.',
+    id: 'especiales',
+    title: 'Especiales',
+    blurb: 'Selecciones completas y favoritas de Sandeli.',
     products: [
-      {
-        id: 'helado-yogur-morado',
-        name: 'Helado de yogur morado',
-        description: 'Base de yogur, mora y toque de cacao.',
-        details: [
-          'Base cremosa de yogur natural.',
-          'Compota de mora y arandanos.',
-          'Topping de nibs de cacao.',
-        ],
-        price: '$9.500',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Helado de yogur en copa.',
-      },
-      {
-        id: 'helado-mango-avena',
-        name: 'Helado tropical de mango y avena',
-        description: 'Mango maduro con coco tostado.',
-        details: [
-          'Mango batido con avena hidratada.',
-          'Leche vegetal y toque de canela.',
-          'Coco tostado en la parte superior.',
-        ],
-        price: '$10.500',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Helado tropical de mango.',
-      },
+      { name: 'Desayuno de la Casa', price: '$26.000' },
+      { name: 'Desayuno Andino', price: '$26.000' },
+      { name: 'Desayuno Costeno', price: '$24.000' },
+      { name: 'Desayuno Americano', price: '$23.000' },
+      { name: 'Choripan', price: '$14.000' },
+    ],
+  },
+  {
+    id: 'waffles',
+    title: 'Waffles',
+    blurb: 'Versiones dulces y saladas para brunch o desayuno.',
+    products: [
+      { name: 'Waffle de Queso', price: '$25.000' },
+      { name: 'Waffles Huevos Cremosos', price: '$23.000' },
+      { name: 'Waffles con frutas y Yogur Griego', price: '$24.000' },
+      { name: 'Waffles con frutas y Helado', price: '$29.000' },
+    ],
+  },
+  {
+    id: 'pancake-bowl',
+    title: 'Pancake & Bowl',
+    blurb: 'Opciones balanceadas entre pancakes y bowls.',
+    products: [
+      { name: 'Pancake Pistacho', price: '$26.000' },
+      { name: 'Pancake Chocofruta', price: '$26.000' },
+      { name: 'Bowl de Frutos Rojos', price: '$25.000' },
+    ],
+  },
+  {
+    id: 'sandwich',
+    title: 'Sandwich',
+    blurb: 'Sandwiches artesanales con sello de la casa.',
+    products: [
+      { name: 'Sandwich Bondiola', price: '$28.000' },
+      { name: 'Sandwich de Pollo', price: '$29.000' },
+      { name: 'Sandwich Monserrat', price: '$28.000' },
+      { name: 'Sandwichito Quesudito', price: '$11.000' },
+    ],
+  },
+  {
+    id: 'pizzas-keto',
+    title: 'Pizzas (Keto)',
+    blurb: 'Pizzas keto con combinaciones premium de Sandeli.',
+    products: [
+      { name: 'Pizza Capresse', price: '$50.000' },
+      { name: 'Pizza Sandeli', price: '$68.000' },
+      { name: 'Pizza Gardenia', price: '$68.000' },
+    ],
+  },
+  {
+    id: 'hamburguesas',
+    title: 'Hamburguesas',
+    blurb: 'Linea de hamburguesas para todos los antojos.',
+    products: [
+      { name: 'Hamburguesa de Carne', price: '$33.000' },
+      { name: 'Hamburguesa con Nuggets', price: '$39.000' },
+      { name: 'Hamburguesa de Pollo', price: '$30.000' },
+      { name: 'Hamburguesa Mixta', price: '$38.000' },
+      { name: 'Hamburguesa de Bondiola', price: '$31.000' },
+      { name: 'Hamburguesa Gaucha', price: '$38.000' },
+      { name: 'Hamburguesa Texana', price: '$39.000' },
+      { name: 'Hamburguesa Doble Carne', price: '$39.000' },
     ],
   },
   {
     id: 'postres',
     title: 'Postres',
-    blurb: 'Dulces de la casa con ingredientes nobles.',
+    blurb: 'Postres y dulces para cerrar con broche de oro.',
     products: [
-      {
-        id: 'postre-cheesecake-berries',
-        name: 'Cheesecake ligero de berries',
-        description: 'Base crocante con topping de frutos rojos.',
-        details: [
-          'Base crocante de avena y frutos secos.',
-          'Relleno de queso suave y yogur.',
-          'Terminacion de frutos rojos frescos.',
-        ],
-        price: '$14.900',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Porcion de cheesecake con berries.',
-      },
-      {
-        id: 'postre-brownie-cacao',
-        name: 'Brownie de cacao y nuez',
-        description: 'Cacao intenso con interior humedo.',
-        details: [
-          'Cacao intenso con harina de almendra.',
-          'Nueces troceadas y centro humedo.',
-          'Toque final de sal marina.',
-        ],
-        price: '$11.900',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Brownie de cacao con nuez.',
-      },
-    ],
-  },
-  {
-    id: 'tortas-porcion',
-    title: 'Tortas por porción',
-    blurb: 'Porciones individuales para acompanar tu cafe.',
-    products: [
-      {
-        id: 'torta-zanahoria-especiada',
-        name: 'Carrot cake especiada',
-        description: 'Miga humeda con nuez y crema suave.',
-        details: [
-          'Bizcocho de zanahoria con especias suaves.',
-          'Relleno ligero de queso crema.',
-          'Nueces caramelizadas y ralladura de naranja.',
-        ],
-        price: '$12.900',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Porcion de carrot cake.',
-      },
-      {
-        id: 'torta-limon-amapola',
-        name: 'Torta de limon y amapola',
-        description: 'Notas citricas y glaseado ligero.',
-        details: [
-          'Miga aireada con limon natural.',
-          'Semillas de amapola y glaseado ligero.',
-          'Decoracion fresca de temporada.',
-        ],
-        price: '$12.500',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Porcion de torta de limon.',
-      },
-    ],
-  },
-  {
-    id: 'bebidas',
-    title: 'Bebidas',
-    blurb: 'Calientes y frias para cada momento.',
-    products: [
-      {
-        id: 'bebida-latte-coco',
-        name: 'Latte de coco y canela',
-        description: 'Espresso suave con leche de coco espumada.',
-        details: [
-          'Cafe espresso y leche de coco espumada.',
-          'Canela suave y toque de miel.',
-          'Servido caliente con aroma especiado.',
-        ],
-        price: '$8.900',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Latte de coco con espuma.',
-      },
-      {
-        id: 'bebida-limonada-lavanda',
-        name: 'Limonada de lavanda',
-        description: 'Refrescante, floral y citrica.',
-        details: [
-          'Limon fresco y jarabe floral casero.',
-          'Agua con gas y hielo cristalino.',
-          'Terminacion con hojas de menta.',
-        ],
-        price: '$9.500',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Limonada con menta y hielo.',
-      },
-    ],
-  },
-  {
-    id: 'recomendados',
-    title: 'Recomendados de la Casa',
-    blurb: 'Favoritos Sandeli para ir a la fija.',
-    products: [
-      {
-        id: 'recomendado-bowl-sandeli',
-        name: 'Bowl signature Sandeli',
-        description: 'Quinoa, vegetales y proteina grillada.',
-        details: [
-          'Base de quinoa y vegetales rostizados.',
-          'Pollo grillado, hummus y aderezo citrico.',
-          'Aguacate, semillas y hojas verdes.',
-        ],
-        price: '$26.900',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Bowl signature de la casa.',
-      },
-      {
-        id: 'recomendado-sandwich-jardin',
-        name: 'Sandwich jardin grillado',
-        description: 'Vegetales asados en pan artesanal.',
-        details: [
-          'Pan artesanal con queso suave.',
-          'Berenjena asada, zucchini y tomates.',
-          'Pesto ligero y ensalada fresca de acompanamiento.',
-        ],
-        price: '$23.500',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Sandwich de vegetales grillados.',
-      },
-    ],
-  },
-  {
-    id: 'temporada',
-    title: 'Producto de Temporada',
-    blurb: 'Sabores por tiempo limitado.',
-    products: [
-      {
-        id: 'temporada-tarta-mango-maracuya',
-        name: 'Tarta tropical de mango y maracuya',
-        description: 'Fresca, frutal y de temporada.',
-        details: [
-          'Base suave tipo sable de almendra.',
-          'Crema de mango y centro de maracuya.',
-          'Decoracion fresca con fruta natural.',
-        ],
-        price: '$13.900',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Tarta tropical de mango.',
-      },
-      {
-        id: 'temporada-matcha-berry-frappe',
-        name: 'Matcha berry frappe',
-        description: 'Bebida fria energizante con frutos rojos.',
-        details: [
-          'Matcha ceremonial batido con hielo.',
-          'Leche vegetal y swirl de frutos rojos.',
-          'Textura fria y energizante.',
-        ],
-        price: '$12.900',
-        imageSrc: defaultProductImage,
-        imageAlt: 'Frappé de matcha y berries.',
-      },
+      { name: 'Parfite', price: '$22.000' },
+      { name: 'Pie de Limon (porcion)', price: '$17.000' },
+      { name: 'Pie de Limon (completo)', price: '$90.000' },
+      { name: 'Brownie Arequipe y Almendras', price: '$9.000' },
+      { name: 'Brownie full chocolate', price: '$12.000' },
+      { name: 'Mini Alfajor', price: '$3.000' },
+      { name: 'Alfajor', price: '$6.000' },
+      { name: 'Muffins', price: '$8.000' },
+      { name: 'Cuchareable Chocoarequipe', price: '$24.000' },
+      { name: 'Cuchareable Victoria', price: '$24.000' },
+      { name: 'Cuchareable Milky Way', price: '$24.000' },
+      { name: 'Cuchareable Tres Leches', price: '$24.000' },
+      { name: 'Tartaleta de Frutos Rojos', price: '$12.000' },
     ],
   },
 ]
+
+export const menuCategories: Category[] = categorySeeds.map((category) => ({
+  id: category.id,
+  title: category.title,
+  blurb: category.blurb,
+  products: category.products.map((product) => createProduct(category.id, product)),
+}))
 
 export const feedbackOptions: FeedbackOption[] = [
   {
