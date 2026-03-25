@@ -440,8 +440,18 @@ function App() {
                     title="Ubicacion de Sandeli en Google Maps"
                     src={businessInfo.mapEmbedUrl}
                     loading="lazy"
+                    allowFullScreen
                     referrerPolicy="no-referrer-when-downgrade"
                   />
+                  <a
+                    className="text-link map-card-link"
+                    href={businessInfo.mapsUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Ver ficha del local
+                    <ArrowUpRight size={15} />
+                  </a>
                 </article>
 
                 <article className="info-card">

@@ -228,7 +228,7 @@ export const businessInfo = {
     { day: 'jueves', time: '8 a.m. - 8 p.m.' },
   ],
   mapEmbedUrl:
-    'https://www.google.com/maps?q=7.8951633,-72.4994668&z=19&output=embed',
+    'https://www.google.com/maps?q=Sandeli+Postres,+Brunch+y+Almuerzos+Saludables,+Cl.+3+%230E-21,+Barrio+La+Ceiba,+Cucuta,+Norte+de+Santander&ll=7.8951633,-72.4994668&z=18&output=embed',
   mapsUrl:
-    'https://maps.app.goo.gl/UqnHT8SFSkmADAr8A',
+    'https://maps.app.goo.gl/kmnhWkfQVfbvJMMR8?g_st=iwb',
 }
