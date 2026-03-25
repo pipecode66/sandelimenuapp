@@ -8,6 +8,7 @@ import {
   EggFried,
   ChefHat,
   Hamburger,
+  IceCreamCone,
   MapPin,
   MapPinned,
   Pizza,
@@ -42,6 +43,7 @@ const menuCategoryIcons: Record<Category['id'], LucideIcon> = {
   postres: CakeSlice,
   'tortas-porcion': ChefHat,
   'bebidas-frias': Soup,
+  helados: IceCreamCone,
   'bebidas-calientes': Coffee,
   minimarket: ShoppingBag,
 }
