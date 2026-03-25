@@ -3,9 +3,8 @@ import {
   ArrowLeft,
   ArrowUpRight,
   CakeSlice,
+  Coffee,
   Clock3,
-  Croissant,
-  Egg,
   EggFried,
   ChefHat,
   Hamburger,
@@ -14,6 +13,7 @@ import {
   Pizza,
   Sandwich,
   Share2,
+  ShoppingBag,
   Soup,
   Star,
   UtensilsCrossed,
@@ -35,21 +35,21 @@ const categoryLookup = new Map(
 )
 
 const menuCategoryIcons: Record<Category['id'], LucideIcon> = {
-  omelette: EggFried,
-  'huevos-quesadillas': Egg,
-  especiales: ChefHat,
-  waffles: Croissant,
-  'pancake-bowl': Soup,
+  'desayunos-brunch': EggFried,
   sandwich: Sandwich,
-  'pizzas-keto': Pizza,
-  hamburguesas: Hamburger,
+  hamburguesa: Hamburger,
+  pizzas: Pizza,
   postres: CakeSlice,
+  'tortas-porcion': ChefHat,
+  'bebidas-frias': Soup,
+  'bebidas-calientes': Coffee,
+  minimarket: ShoppingBag,
 }
 
 const productImageOverrides: Partial<
   Record<Product['id'], { cardSrc: string; detailSrc: string }>
 > = {
-  'omelette-omelette-criollo': {
+  'desayunos-brunch-omelette-criollo': {
     cardSrc: '/assets/producto.png',
     detailSrc: '/assets/productoampliado.png',
   },

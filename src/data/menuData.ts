@@ -60,56 +60,28 @@ const createProduct = (categoryId: string, seed: ProductSeed): Product => ({
 
 const categorySeeds: CategorySeed[] = [
   {
-    id: 'omelette',
-    title: 'Omelette',
-    blurb: 'Preparaciones de omelette con combinaciones de la casa.',
+    id: 'desayunos-brunch',
+    title: 'Desayunos y Brunch',
+    blurb: 'Opciones de desayuno y brunch con combinaciones de la casa.',
     products: [
       { name: 'Omelette Criollo', price: '$24.000' },
       { name: 'Omelette de Carne Mechada', price: '$28.000' },
       { name: 'Omelette de Pollo Mechado', price: '$26.000' },
       { name: 'Omelette de Pollo Cremoso', price: '$29.000' },
       { name: 'Omelette de Llanero', price: '$27.000' },
-    ],
-  },
-  {
-    id: 'huevos-quesadillas',
-    title: 'Huevos & Quesadillas',
-    blurb: 'Recetas de huevos y quesadillas para empezar el dia.',
-    products: [
       { name: 'Huevos Benedictinos', price: '$28.000' },
       { name: 'Huevos Napolitanos', price: '$22.000' },
       { name: 'Huevos Turcos', price: '$22.000' },
       { name: 'Quesadilla de Pollo', price: '$27.000' },
-    ],
-  },
-  {
-    id: 'especiales',
-    title: 'Especiales',
-    blurb: 'Selecciones completas y favoritas de Sandeli.',
-    products: [
       { name: 'Desayuno de la Casa', price: '$26.000' },
       { name: 'Desayuno Andino', price: '$26.000' },
       { name: 'Desayuno Costeno', price: '$24.000' },
       { name: 'Desayuno Americano', price: '$23.000' },
       { name: 'Choripan', price: '$14.000' },
-    ],
-  },
-  {
-    id: 'waffles',
-    title: 'Waffles',
-    blurb: 'Versiones dulces y saladas para brunch o desayuno.',
-    products: [
       { name: 'Waffle de Queso', price: '$25.000' },
       { name: 'Waffles Huevos Cremosos', price: '$23.000' },
       { name: 'Waffles con frutas y Yogur Griego', price: '$24.000' },
       { name: 'Waffles con frutas y Helado', price: '$29.000' },
-    ],
-  },
-  {
-    id: 'pancake-bowl',
-    title: 'Pancake & Bowl',
-    blurb: 'Opciones balanceadas entre pancakes y bowls.',
-    products: [
       { name: 'Pancake Pistacho', price: '$26.000' },
       { name: 'Pancake Chocofruta', price: '$26.000' },
       { name: 'Bowl de Frutos Rojos', price: '$25.000' },
@@ -127,18 +99,8 @@ const categorySeeds: CategorySeed[] = [
     ],
   },
   {
-    id: 'pizzas-keto',
-    title: 'Pizzas (Keto)',
-    blurb: 'Pizzas keto con combinaciones premium de Sandeli.',
-    products: [
-      { name: 'Pizza Capresse', price: '$50.000' },
-      { name: 'Pizza Sandeli', price: '$68.000' },
-      { name: 'Pizza Gardenia', price: '$68.000' },
-    ],
-  },
-  {
-    id: 'hamburguesas',
-    title: 'Hamburguesas',
+    id: 'hamburguesa',
+    title: 'Hamburguesa',
     blurb: 'Linea de hamburguesas para todos los antojos.',
     products: [
       { name: 'Hamburguesa de Carne', price: '$33.000' },
@@ -149,6 +111,16 @@ const categorySeeds: CategorySeed[] = [
       { name: 'Hamburguesa Gaucha', price: '$38.000' },
       { name: 'Hamburguesa Texana', price: '$39.000' },
       { name: 'Hamburguesa Doble Carne', price: '$39.000' },
+    ],
+  },
+  {
+    id: 'pizzas',
+    title: 'Pizzas',
+    blurb: 'Pizzas con combinaciones premium de Sandeli.',
+    products: [
+      { name: 'Pizza Capresse', price: '$50.000' },
+      { name: 'Pizza Sandeli', price: '$68.000' },
+      { name: 'Pizza Gardenia', price: '$68.000' },
     ],
   },
   {
@@ -169,6 +141,50 @@ const categorySeeds: CategorySeed[] = [
       { name: 'Cuchareable Milky Way', price: '$24.000' },
       { name: 'Cuchareable Tres Leches', price: '$24.000' },
       { name: 'Tartaleta de Frutos Rojos', price: '$12.000' },
+    ],
+  },
+  {
+    id: 'tortas-porcion',
+    title: 'Tortas por porción',
+    blurb: 'Selecciones por porcion para antojos dulces.',
+    products: [
+      { name: 'Pie de Limon (porcion)', price: '$17.000' },
+      { name: 'Tartaleta de Frutos Rojos', price: '$12.000' },
+      { name: 'Brownie Arequipe y Almendras', price: '$9.000' },
+      { name: 'Brownie full chocolate', price: '$12.000' },
+    ],
+  },
+  {
+    id: 'bebidas-frias',
+    title: 'Bebidas Frías',
+    blurb: 'Opciones frias para acompanar cualquier momento.',
+    products: [
+      { name: 'Limonada natural', price: 'Consultar' },
+      { name: 'Limonada de hierbabuena', price: 'Consultar' },
+      { name: 'Soda frutal', price: 'Consultar' },
+      { name: 'Frappe de temporada', price: 'Consultar' },
+    ],
+  },
+  {
+    id: 'bebidas-calientes',
+    title: 'Bebidas Calientes',
+    blurb: 'Bebidas calientes para iniciar o cerrar el dia.',
+    products: [
+      { name: 'Cafe americano', price: 'Consultar' },
+      { name: 'Capuccino', price: 'Consultar' },
+      { name: 'Chocolate caliente', price: 'Consultar' },
+      { name: 'Aromatica de frutas', price: 'Consultar' },
+    ],
+  },
+  {
+    id: 'minimarket',
+    title: 'Minimarket',
+    blurb: 'Productos listos para llevar y disfrutar en casa.',
+    products: [
+      { name: 'Granola artesanal', price: 'Consultar' },
+      { name: 'Pan artesanal', price: 'Consultar' },
+      { name: 'Mermelada sin azucar', price: 'Consultar' },
+      { name: 'Snack saludable', price: 'Consultar' },
     ],
   },
 ]
