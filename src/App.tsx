@@ -67,6 +67,46 @@ const productImageOverrides: Partial<
     cardSrc: '/assets/hamburguesa-mixta.jpg',
     detailSrc: '/assets/hamburguesa-mixta.jpg',
   },
+  'tortas-porcion-amapola': {
+    cardSrc: '/assets/torta-amapola.png',
+    detailSrc: '/assets/torta-amapola.png',
+  },
+  'tortas-porcion-astromelia': {
+    cardSrc: '/assets/torta-astromelia.png',
+    detailSrc: '/assets/torta-astromelia.png',
+  },
+  'tortas-porcion-cataleya': {
+    cardSrc: '/assets/torta-cataleya.png',
+    detailSrc: '/assets/torta-cataleya.png',
+  },
+  'tortas-porcion-chocolata': {
+    cardSrc: '/assets/torta-chocolata.png',
+    detailSrc: '/assets/torta-chocolata.png',
+  },
+  'tortas-porcion-hortensia': {
+    cardSrc: '/assets/torta-hortencia.png',
+    detailSrc: '/assets/torta-hortencia.png',
+  },
+  'tortas-porcion-lirio': {
+    cardSrc: '/assets/torta-lirio.png',
+    detailSrc: '/assets/torta-lirio.png',
+  },
+  'tortas-porcion-margarita': {
+    cardSrc: '/assets/torta-margarita.png',
+    detailSrc: '/assets/torta-margarita.png',
+  },
+  'tortas-porcion-camelia': {
+    cardSrc: '/assets/torta-camelia.png',
+    detailSrc: '/assets/torta-camelia.png',
+  },
+  'tortas-porcion-torta-de-pan-de-quinoa-completa': {
+    cardSrc: '/assets/torta-pan-quinoa-completa.png',
+    detailSrc: '/assets/torta-pan-quinoa-completa.png',
+  },
+  'tortas-porcion-torta-de-pan-de-quinoa-porcion': {
+    cardSrc: '/assets/torta-pan-quinoa-porcion.png',
+    detailSrc: '/assets/torta-pan-quinoa-porcion.png',
+  },
 }
 
 const productLookup = new Map(
