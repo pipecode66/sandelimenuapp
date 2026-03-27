@@ -111,6 +111,38 @@ const productImageOverrides: Partial<
     cardSrc: '/assets/helado-galleta-almendra.jpg',
     detailSrc: '/assets/helado-galleta-almendra.jpg',
   },
+  'desayunos-brunch-arepas-maiz-carne-mechada-y-mix-de-quesos': {
+    cardSrc: '/assets/arepa-maiz-carne-queso.jpg',
+    detailSrc: '/assets/arepa-maiz-carne-queso.jpg',
+  },
+  'desayunos-brunch-arepas-maiz-pollo-cremoso': {
+    cardSrc: '/assets/arepa-maiz-pollo-cremoso.jpg',
+    detailSrc: '/assets/arepa-maiz-pollo-cremoso.jpg',
+  },
+  'desayunos-brunch-arepas-almendras-carne-mechada-y-mix-de-quesos': {
+    cardSrc: '/assets/arepa-almendras-carne-queso.jpg',
+    detailSrc: '/assets/arepa-almendras-carne-queso.jpg',
+  },
+  'desayunos-brunch-arepas-almendras-pollo-cremoso': {
+    cardSrc: '/assets/arepa-almendras-pollo-cremoso.jpg',
+    detailSrc: '/assets/arepa-almendras-pollo-cremoso.jpg',
+  },
+  'desayunos-brunch-waffles-waffle-de-queso': {
+    cardSrc: '/assets/waffle-queso.jpg',
+    detailSrc: '/assets/waffle-queso.jpg',
+  },
+  'desayunos-brunch-waffles-waffles-huevos-cremosos': {
+    cardSrc: '/assets/waffle-huevos-cremosos.jpg',
+    detailSrc: '/assets/waffle-huevos-cremosos.jpg',
+  },
+  'desayunos-brunch-waffles-waffles-con-frutas-y-helado': {
+    cardSrc: '/assets/waffles-frutas-helado.jpg',
+    detailSrc: '/assets/waffles-frutas-helado.jpg',
+  },
+  'desayunos-brunch-waffles-waffles-con-frutas-y-yogur-griego': {
+    cardSrc: '/assets/waffles-frutas-yogur-griego.jpg',
+    detailSrc: '/assets/waffles-frutas-yogur-griego.jpg',
+  },
 }
 
 const productLookup = new Map(
