@@ -55,6 +55,14 @@ const productImageOverrides: Partial<
     cardSrc: '/assets/producto.png',
     detailSrc: '/assets/productoampliado.png',
   },
+  'sandwich-sandwich-bondiola': {
+    cardSrc: '/assets/sandwich-bondiola.jpg',
+    detailSrc: '/assets/sandwich-bondiola.jpg',
+  },
+  'sandwich-sandwich-de-pollo': {
+    cardSrc: '/assets/sandwich-pollo.jpg',
+    detailSrc: '/assets/sandwich-pollo.jpg',
+  },
   'hamburguesa-hamburguesas-hamburguesa-gaucha': {
     cardSrc: '/assets/hamburguesa-gaucha.jpg',
     detailSrc: '/assets/hamburguesa-gaucha.jpg',
