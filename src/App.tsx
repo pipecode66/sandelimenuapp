@@ -55,6 +55,18 @@ const productImageOverrides: Partial<
     cardSrc: '/assets/producto.png',
     detailSrc: '/assets/productoampliado.png',
   },
+  'hamburguesa-hamburguesas-hamburguesa-gaucha': {
+    cardSrc: '/assets/hamburguesa-gaucha.jpg',
+    detailSrc: '/assets/hamburguesa-gaucha.jpg',
+  },
+  'hamburguesa-hamburguesas-hamburguesa-texana': {
+    cardSrc: '/assets/hamburguesa-texana.jpg',
+    detailSrc: '/assets/hamburguesa-texana.jpg',
+  },
+  'hamburguesa-hamburguesas-hamburguesa-mixta': {
+    cardSrc: '/assets/hamburguesa-mixta.jpg',
+    detailSrc: '/assets/hamburguesa-mixta.jpg',
+  },
 }
 
 const productLookup = new Map(
