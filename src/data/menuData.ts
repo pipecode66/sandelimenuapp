@@ -293,8 +293,6 @@ const categorySeeds: CategorySeed[] = [
     blurb: 'Helados y combinaciones dulces para antojarse.',
     products: [
       { name: 'Helado', price: '$17.000' },
-      { name: 'Topping', price: '$2.500' },
-      { name: 'Topping de frambuesa cubierta', price: '$3.000' },
       { name: 'Helado con Alfajor', price: '$15.000' },
       { name: 'Helado con Galleta de Almendra', price: '$25.000' },
       { name: 'Helado con Mini Brownie', price: '$17.000' },

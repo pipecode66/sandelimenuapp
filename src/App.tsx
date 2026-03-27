@@ -107,6 +107,10 @@ const productImageOverrides: Partial<
     cardSrc: '/assets/torta-pan-quinoa-porcion.png',
     detailSrc: '/assets/torta-pan-quinoa-porcion.png',
   },
+  'helados-helado-con-galleta-de-almendra': {
+    cardSrc: '/assets/helado-galleta-almendra.jpg',
+    detailSrc: '/assets/helado-galleta-almendra.jpg',
+  },
 }
 
 const productLookup = new Map(
