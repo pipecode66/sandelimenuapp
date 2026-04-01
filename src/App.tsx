@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -165,10 +165,9 @@ const createWhatsAppHref = (phone: string, message: string) =>
     message,
   )}`
 
-const menuRoutePath = '/menÃƒÂº'
+const menuRoutePath = '/menú'
 const menuRouteAlias = '/menu'
 const productClicksStorageKey = 'sandeli-product-clicks-v1'
-const allCatalogFilterId = '__all__'
 
 const normalizePathname = (pathname: string) => {
   try {
@@ -219,8 +218,6 @@ function App() {
   const [activeCategoryId, setActiveCategoryId] = useState(
     fallbackMenuCategories[0]?.id || '',
   )
-  const [activeCatalogSectionId, setActiveCatalogSectionId] =
-    useState(allCatalogFilterId)
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
   const [productClickCounts, setProductClickCounts] = useState<
     Record<string, number>
@@ -274,46 +271,31 @@ function App() {
   const selectedProductImages = selectedProductEntry
     ? getProductImages(selectedProductEntry.product)
     : null
-  const rootProducts = useMemo(
-    () => activeCategory?.products.filter((product) => !product.sectionId) ?? [],
-    [activeCategory],
-  )
-  const activeCategorySections = useMemo(
-    () =>
-      activeCategory?.sections && activeCategory.sections.length > 0
+  const rootProducts = activeCategory?.products.filter((product) => !product.sectionId) ?? []
+  const activeCategorySections =
+    activeCategory?.sections && activeCategory.sections.length > 0
+      ? [
+          ...(rootProducts.length > 0
+            ? [
+                {
+                  id: `${activeCategory.id}-root`,
+                  title: activeCategory.title,
+                  products: rootProducts,
+                },
+              ]
+            : []),
+          ...activeCategory.sections,
+        ]
+      : activeCategory
         ? [
-            ...(rootProducts.length > 0
-              ? [
-                  {
-                    id: `${activeCategory.id}-root`,
-                    title: activeCategory.title,
-                    products: rootProducts,
-                  },
-                ]
-              : []),
-            ...activeCategory.sections,
+            {
+              id: `${activeCategory.id}-default`,
+              title: activeCategory.title,
+              products: activeCategory.products,
+            },
           ]
-        : activeCategory
-          ? [
-              {
-                id: `${activeCategory.id}-default`,
-                title: activeCategory.title,
-                products: activeCategory.products,
-              },
-            ]
-          : [],
-    [activeCategory, rootProducts],
-  )
-  const activeCatalogSections = useMemo(
-    () =>
-      activeCatalogSectionId === allCatalogFilterId
-        ? activeCategorySections
-        : activeCategorySections.filter(
-            (section) => section.id === activeCatalogSectionId,
-          ),
-    [activeCatalogSectionId, activeCategorySections],
-  )
-  const leadSectionTitle = activeCategory?.title ?? 'Menu'
+        : []
+  const leadSectionTitle = activeCategorySections[0]?.title ?? activeCategory?.title ?? 'Menu'
 
   const featuredProduct = useMemo(() => {
     if (!activeCategory) return null
@@ -343,7 +325,6 @@ function App() {
   const focusCategory = (categoryId: string) => {
     const nextCategory = categoryLookup.get(categoryId) ?? menuCategories[0]
     setActiveCategoryId(nextCategory.id)
-    setActiveCatalogSectionId(allCatalogFilterId)
   }
 
   const openMenu = (categoryId = activeCategory.id) => {
@@ -459,16 +440,6 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (activeCatalogSectionId === allCatalogFilterId) return
-    if (
-      activeCategorySections.some((section) => section.id === activeCatalogSectionId)
-    ) {
-      return
-    }
-    setActiveCatalogSectionId(allCatalogFilterId)
-  }, [activeCatalogSectionId, activeCategorySections])
-
-  useEffect(() => {
     if (!toastMessage) return undefined
     const timeoutId = window.setTimeout(() => setToastMessage(null), 2300)
     return () => window.clearTimeout(timeoutId)
@@ -561,7 +532,7 @@ function App() {
                 >
                   <span className="entry-tile-inner">
                     <UtensilsCrossed size={18} />
-                    MenÃƒÂº
+                    Menú
                   </span>
                 </button>
                 <button
@@ -581,7 +552,7 @@ function App() {
                 >
                   <span className="entry-tile-inner">
                     <MapPin size={18} />
-                    EncuÃƒÂ©ntranos
+                    Encuéntranos
                   </span>
                 </button>
                 <button
@@ -591,7 +562,7 @@ function App() {
                 >
                   <span className="entry-tile-inner">
                     <Star size={18} />
-                    Danos tu opiniÃƒÂ³n
+                    Danos tu opinión
                   </span>
                 </button>
               </div>
@@ -807,63 +778,14 @@ function App() {
               </article>
             ) : null}
 
-            <div className="catalog-filter-stack">
-              <div className="catalog-filter-group">
-                <p className="catalog-filter-label">Categorias</p>
-                <div className="category-grid catalog-filter-grid">
-                  {menuCategories.map((category) => (
-                    <button
-                      key={category.id}
-                      type="button"
-                      className={`category-pill ${
-                        category.id === activeCategory?.id ? 'is-active' : ''
-                      }`}
-                      onClick={() => focusCategory(category.id)}
-                    >
-                      {category.title}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {activeCategorySections.length > 1 ? (
-                <div className="catalog-filter-group">
-                  <p className="catalog-filter-label">Subcategorias</p>
-                  <div className="category-grid catalog-filter-grid">
-                    <button
-                      type="button"
-                      className={`category-pill ${
-                        activeCatalogSectionId === allCatalogFilterId ? 'is-active' : ''
-                      }`}
-                      onClick={() => setActiveCatalogSectionId(allCatalogFilterId)}
-                    >
-                      Ver todo
-                    </button>
-                    {activeCategorySections.map((section) => (
-                      <button
-                        key={section.id}
-                        type="button"
-                        className={`category-pill ${
-                          activeCatalogSectionId === section.id ? 'is-active' : ''
-                        }`}
-                        onClick={() => setActiveCatalogSectionId(section.id)}
-                      >
-                        {section.title}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-            </div>
-
-            {activeCatalogSections.map((section, sectionIndex) => (
+            {activeCategorySections.map((section, sectionIndex) => (
               <section
                 key={section.id}
                 className={`catalog-section ${
                   sectionIndex === 0 ? 'is-first' : 'has-divider'
                 }`}
               >
-                {sectionIndex === 0 && activeCatalogSectionId === allCatalogFilterId ? null : (
+                {sectionIndex === 0 ? null : (
                   <div className="catalog-title-pill catalog-subtitle-pill">
                     {section.title}
                   </div>

@@ -1276,30 +1276,6 @@
   box-shadow: 0 8px 18px color-mix(in srgb, var(--ink) 10%, transparent);
 }
 
-.catalog-filter-stack {
-  margin-top: 0.72rem;
-  display: grid;
-  gap: 0.52rem;
-}
-
-.catalog-filter-group {
-  display: grid;
-  gap: 0.32rem;
-}
-
-.catalog-filter-label {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.catalog-filter-grid {
-  margin-top: 0;
-}
-
 .catalog-section.has-divider {
   margin-top: 0.72rem;
 }
