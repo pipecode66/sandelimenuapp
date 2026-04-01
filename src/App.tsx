@@ -22,30 +22,23 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import './App.css'
-import {
-  businessInfo,
-  menuCategories,
-  type Category,
-  type Product,
-} from './data/menuData'
+import { businessInfo, type Category, type Product } from './data/menuData'
+import { fallbackMenuCategories, loadRemoteMenuCategories } from './lib/menuApi'
 
 const googleReviewUrl = 'https://g.page/r/CS4686nLJ5EbEBM/review'
 
-const categoryLookup = new Map(
-  menuCategories.map((category) => [category.id, category]),
-)
-
-const menuCategoryIcons: Record<Category['id'], LucideIcon> = {
-  'desayunos-brunch': EggFried,
+const menuCategoryIcons: Record<string, LucideIcon> = {
+  utensils: UtensilsCrossed,
+  breakfast: EggFried,
   sandwich: Sandwich,
-  hamburguesa: Hamburger,
-  pizzas: Pizza,
-  postres: CakeSlice,
-  'tortas-porcion': ChefHat,
-  'bebidas-frias': Soup,
-  helados: IceCreamCone,
-  'bebidas-calientes': Coffee,
-  minimarket: ShoppingBag,
+  burger: Hamburger,
+  pizza: Pizza,
+  dessert: CakeSlice,
+  cake: ChefHat,
+  cold_drink: Soup,
+  ice_cream: IceCreamCone,
+  hot_drink: Coffee,
+  market: ShoppingBag,
 }
 
 const productImageOverrides: Partial<
@@ -153,17 +146,13 @@ const productImageOverrides: Partial<
   },
 }
 
-const productLookup = new Map(
-  menuCategories.flatMap((category) =>
-    category.products.map((product) => [
-      product.id,
-      {
-        category,
-        product,
-      },
-    ]),
-  ),
-)
+const getProductImages = (product: Product) => {
+  const override = productImageOverrides[product.id]
+  return {
+    cardSrc: override?.cardSrc ?? product.imageSrc ?? null,
+    detailSrc: override?.detailSrc ?? product.imageSrc ?? null,
+  }
+}
 
 const normalizeWhatsAppPhone = (phone: string) => {
   const digits = phone.replace(/\D/g, '')
@@ -225,7 +214,10 @@ function App() {
     startsInMenuRoute(),
   )
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [activeCategoryId, setActiveCategoryId] = useState(menuCategories[0].id)
+  const [menuCategories, setMenuCategories] = useState<Category[]>(fallbackMenuCategories)
+  const [activeCategoryId, setActiveCategoryId] = useState(
+    fallbackMenuCategories[0]?.id || '',
+  )
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
   const [productClickCounts, setProductClickCounts] = useState<
     Record<string, number>
@@ -252,26 +244,61 @@ function App() {
   })
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
+  const categoryLookup = useMemo(
+    () => new Map(menuCategories.map((category) => [category.id, category])),
+    [menuCategories],
+  )
+  const productLookup = useMemo(
+    () =>
+      new Map(
+        menuCategories.flatMap((category) =>
+          category.products.map((product) => [
+            product.id,
+            {
+              category,
+              product,
+            },
+          ]),
+        ),
+      ),
+    [menuCategories],
+  )
+
   const activeCategory = categoryLookup.get(activeCategoryId) ?? menuCategories[0]
   const selectedProductEntry = selectedProductId
     ? productLookup.get(selectedProductId) ?? null
     : null
-  const selectedProductImageOverride = selectedProductEntry
-    ? productImageOverrides[selectedProductEntry.product.id]
-    : undefined
+  const selectedProductImages = selectedProductEntry
+    ? getProductImages(selectedProductEntry.product)
+    : null
+  const rootProducts = activeCategory?.products.filter((product) => !product.sectionId) ?? []
   const activeCategorySections =
-    activeCategory.sections && activeCategory.sections.length > 0
-      ? activeCategory.sections
-      : [
-          {
-            id: `${activeCategory.id}-default`,
-            title: activeCategory.title,
-            products: activeCategory.products,
-          },
+    activeCategory?.sections && activeCategory.sections.length > 0
+      ? [
+          ...(rootProducts.length > 0
+            ? [
+                {
+                  id: `${activeCategory.id}-root`,
+                  title: activeCategory.title,
+                  products: rootProducts,
+                },
+              ]
+            : []),
+          ...activeCategory.sections,
         ]
-  const leadSectionTitle = activeCategorySections[0]?.title ?? activeCategory.title
+      : activeCategory
+        ? [
+            {
+              id: `${activeCategory.id}-default`,
+              title: activeCategory.title,
+              products: activeCategory.products,
+            },
+          ]
+        : []
+  const leadSectionTitle = activeCategorySections[0]?.title ?? activeCategory?.title ?? 'Menu'
 
   const featuredProduct = useMemo(() => {
+    if (!activeCategory) return null
     const [firstProduct] = activeCategory.products
     if (!firstProduct) return null
 
@@ -291,9 +318,9 @@ function App() {
       clicks: winnerClicks,
     }
   }, [activeCategory, productClickCounts])
-  const featuredProductImageOverride = featuredProduct
-    ? productImageOverrides[featuredProduct.product.id]
-    : undefined
+  const featuredProductImages = featuredProduct
+    ? getProductImages(featuredProduct.product)
+    : null
 
   const focusCategory = (categoryId: string) => {
     const nextCategory = categoryLookup.get(categoryId) ?? menuCategories[0]
@@ -395,6 +422,24 @@ function App() {
   }
 
   useEffect(() => {
+    let cancelled = false
+
+    loadRemoteMenuCategories().then((remoteCategories) => {
+      if (cancelled || !remoteCategories?.length) return
+      setMenuCategories(remoteCategories)
+      setActiveCategoryId((current) =>
+        remoteCategories.some((category) => category.id === current)
+          ? current
+          : remoteCategories[0].id,
+      )
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
     if (!toastMessage) return undefined
     const timeoutId = window.setTimeout(() => setToastMessage(null), 2300)
     return () => window.clearTimeout(timeoutId)
@@ -444,12 +489,12 @@ function App() {
 
     const productMatch = productLookup.get(hash)
     if (productMatch) {
-      focusCategory(productMatch.category.id)
+      setActiveCategoryId(productMatch.category.id)
       setIsMenuOpen(true)
       setIsMenuPickerOpen(false)
       setSelectedProductId(productMatch.product.id)
     }
-  }, [])
+  }, [productLookup])
 
   useEffect(() => {
     const handlePopState = () => {
@@ -641,8 +686,8 @@ function App() {
 
             <div className="menu-choice-list">
               {menuCategories.map((category) => {
-                const CategoryIcon = menuCategoryIcons[category.id]
-
+                const CategoryIcon =
+                  menuCategoryIcons[category.iconKey || 'utensils'] || UtensilsCrossed
                 return (
                   <button
                     key={category.id}
@@ -684,10 +729,16 @@ function App() {
               <div
                 className="catalog-banner-placeholder"
                 role="img"
-                aria-label={`Placeholder de banner para ${activeCategory.title}`}
+                aria-label={activeCategory ? `Banner de ${activeCategory.title}` : 'Banner de categoria'}
               >
-                <img src="/assets/logo.png" alt="" aria-hidden="true" />
-                <span>Placeholder banner de categoria</span>
+                {activeCategory?.bannerImageUrl ? (
+                  <img src={activeCategory.bannerImageUrl} alt={`Banner de ${activeCategory.title}`} />
+                ) : (
+                  <>
+                    <img src="/assets/logo.png" alt="" aria-hidden="true" />
+                    <span>Banner de categoria</span>
+                  </>
+                )}
               </div>
 
               <div className="catalog-title-pill">{leadSectionTitle}</div>
@@ -703,12 +754,12 @@ function App() {
                 >
                   <div
                     className={`catalog-featured-media ${
-                      featuredProductImageOverride ? 'has-image' : ''
+                      featuredProductImages?.cardSrc ? 'has-image' : ''
                     }`}
                   >
-                    {featuredProductImageOverride ? (
+                    {featuredProductImages?.cardSrc ? (
                       <img
-                        src={featuredProductImageOverride.cardSrc}
+                        src={featuredProductImages.cardSrc}
                         alt={`Imagen de ${featuredProduct.product.name}`}
                         loading="lazy"
                       />
@@ -742,7 +793,7 @@ function App() {
 
                 <div className="catalog-grid">
                   {section.products.map((product) => {
-                    const productImageOverride = productImageOverrides[product.id]
+                    const productImages = getProductImages(product)
 
                     return (
                       <article key={product.id} className="catalog-product-card">
@@ -753,12 +804,12 @@ function App() {
                         >
                           <div
                             className={`catalog-product-media ${
-                              productImageOverride ? 'has-image' : ''
+                              productImages.cardSrc ? 'has-image' : ''
                             }`}
                           >
-                            {productImageOverride ? (
+                            {productImages.cardSrc ? (
                               <img
-                                src={productImageOverride.cardSrc}
+                                src={productImages.cardSrc}
                                 alt={`Imagen de ${product.name}`}
                                 loading="lazy"
                               />
@@ -813,12 +864,12 @@ function App() {
 
             <div
               className={`product-view-media ${
-                selectedProductImageOverride ? 'has-image' : ''
+                selectedProductImages?.detailSrc ? 'has-image' : ''
               }`}
             >
-              {selectedProductImageOverride ? (
+              {selectedProductImages?.detailSrc ? (
                 <img
-                  src={selectedProductImageOverride.detailSrc}
+                  src={selectedProductImages.detailSrc}
                   alt={`Imagen ampliada de ${selectedProductEntry.product.name}`}
                 />
               ) : (
@@ -836,11 +887,13 @@ function App() {
               <h3>{selectedProductEntry.product.name}</h3>
               <p>{selectedProductEntry.product.description}</p>
 
-              <ul>
-                {selectedProductEntry.product.details.map((detail) => (
-                  <li key={detail}>{detail}</li>
-                ))}
-              </ul>
+              {selectedProductEntry.product.details.length > 0 ? (
+                <ul>
+                  {selectedProductEntry.product.details.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+              ) : null}
 
               <div className="product-view-footer">
                 <strong>{selectedProductEntry.product.price}</strong>

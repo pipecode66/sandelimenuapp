@@ -1,10 +1,12 @@
 export type Product = {
   id: string
+  sectionId?: string | null
   name: string
   description: string
   details: string[]
   price: string
-  imageSrc: string
+  priceAmount?: number
+  imageSrc: string | null
   imageAlt: string
 }
 
@@ -12,6 +14,8 @@ export type Category = {
   id: string
   title: string
   blurb: string
+  iconKey?: string
+  bannerImageUrl?: string | null
   products: Product[]
   sections?: CategorySection[]
 }
@@ -64,6 +68,7 @@ const createProduct = (
   sectionId?: string,
 ): Product => ({
   id: `${categoryId}-${sectionId ? `${sectionId}-` : ''}${slugify(seed.name)}`,
+  sectionId: sectionId || null,
   name: seed.name,
   description: `Preparación de ${seed.name} con estilo Sandelí.`,
   details: [
