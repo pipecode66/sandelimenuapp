@@ -41,6 +41,35 @@ const menuCategoryIcons: Record<string, LucideIcon> = {
   market: ShoppingBag,
 }
 
+const normalizeCategoryKey = (value: string) =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+
+const fallbackBannerById = new Map(
+  fallbackMenuCategories.map((category) => [category.id, category.bannerImageUrl ?? null]),
+)
+
+const fallbackBannerByTitle = new Map(
+  fallbackMenuCategories.map((category) => [
+    normalizeCategoryKey(category.title),
+    category.bannerImageUrl ?? null,
+  ]),
+)
+
+const resolveCategoryBannerUrl = (category?: Category) => {
+  if (!category) return null
+  if (category.bannerImageUrl) return category.bannerImageUrl
+  return (
+    fallbackBannerById.get(category.id) ??
+    fallbackBannerByTitle.get(normalizeCategoryKey(category.title)) ??
+    null
+  )
+}
+
 const productImageOverrides: Partial<
   Record<Product['id'], { cardSrc: string; detailSrc: string }>
 > = {
@@ -295,6 +324,7 @@ function App() {
             },
           ]
         : []
+  const activeCategoryBannerUrl = resolveCategoryBannerUrl(activeCategory)
   const leadSectionTitle = activeCategorySections[0]?.title ?? activeCategory?.title ?? 'Menu'
 
   const featuredProduct = useMemo(() => {
@@ -728,13 +758,13 @@ function App() {
             <section className="catalog-hero">
               <div
                 className={`catalog-banner-placeholder ${
-                  activeCategory?.bannerImageUrl ? 'has-image' : ''
+                  activeCategoryBannerUrl ? 'has-image' : ''
                 }`}
                 role="img"
                 aria-label={activeCategory ? `Banner de ${activeCategory.title}` : 'Banner de categoria'}
               >
-                {activeCategory?.bannerImageUrl ? (
-                  <img src={activeCategory.bannerImageUrl} alt={`Banner de ${activeCategory.title}`} />
+                {activeCategoryBannerUrl ? (
+                  <img src={activeCategoryBannerUrl} alt={`Banner de ${activeCategory.title}`} />
                 ) : (
                   <>
                     <img src="/assets/logo.png" alt="" aria-hidden="true" />
