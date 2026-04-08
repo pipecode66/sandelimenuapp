@@ -41,17 +41,38 @@ const menuCategoryIcons: Record<string, LucideIcon> = {
   market: ShoppingBag,
 }
 
+const categoryBannerById: Record<string, string> = {
+  'desayunos-brunch': '/assets/banners/banner-desayunos-brunch.png',
+  sandwich: '/assets/banners/banner-sandwich.png',
+  hamburguesa: '/assets/banners/banner-hamburguesas.png',
+  pizzas: '/assets/banners/banner-pizzas.png',
+  postres: '/assets/banners/banner-postres.png',
+  'tortas-porcion': '/assets/banners/banner-tortas-porcion.png',
+  'bebidas-frias': '/assets/banners/banner-bebidas-frias.png',
+  helados: '/assets/banners/banner-helados.png',
+  'bebidas-calientes': '/assets/banners/banner-bebidas-calientes.png',
+}
+
+const categoryBannerByIconKey: Record<string, string> = {
+  breakfast: '/assets/banners/banner-desayunos-brunch.png',
+  sandwich: '/assets/banners/banner-sandwich.png',
+  burger: '/assets/banners/banner-hamburguesas.png',
+  pizza: '/assets/banners/banner-pizzas.png',
+  dessert: '/assets/banners/banner-postres.png',
+  cake: '/assets/banners/banner-tortas-porcion.png',
+  cold_drink: '/assets/banners/banner-bebidas-frias.png',
+  ice_cream: '/assets/banners/banner-helados.png',
+  hot_drink: '/assets/banners/banner-bebidas-calientes.png',
+}
+
 const normalizeCategoryKey = (value: string) =>
   value
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
+    .replace(/&/g, ' y ')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim()
-
-const fallbackBannerById = new Map(
-  fallbackMenuCategories.map((category) => [category.id, category.bannerImageUrl ?? null]),
-)
 
 const fallbackBannerByTitle = new Map(
   fallbackMenuCategories.map((category) => [
@@ -60,14 +81,71 @@ const fallbackBannerByTitle = new Map(
   ]),
 )
 
+const categoryTitleBannerHints: Array<{ includes: string[]; banner: string }> = [
+  {
+    includes: ['desayun'],
+    banner: '/assets/banners/banner-desayunos-brunch.png',
+  },
+  {
+    includes: ['brunch'],
+    banner: '/assets/banners/banner-desayunos-brunch.png',
+  },
+  {
+    includes: ['sandwich'],
+    banner: '/assets/banners/banner-sandwich.png',
+  },
+  {
+    includes: ['hamburg'],
+    banner: '/assets/banners/banner-hamburguesas.png',
+  },
+  {
+    includes: ['pizza'],
+    banner: '/assets/banners/banner-pizzas.png',
+  },
+  {
+    includes: ['postre'],
+    banner: '/assets/banners/banner-postres.png',
+  },
+  {
+    includes: ['torta'],
+    banner: '/assets/banners/banner-tortas-porcion.png',
+  },
+  {
+    includes: ['helad'],
+    banner: '/assets/banners/banner-helados.png',
+  },
+  {
+    includes: ['bebida', 'fria'],
+    banner: '/assets/banners/banner-bebidas-frias.png',
+  },
+  {
+    includes: ['bebida', 'caliente'],
+    banner: '/assets/banners/banner-bebidas-calientes.png',
+  },
+]
+
 const resolveCategoryBannerUrl = (category?: Category) => {
   if (!category) return null
   if (category.bannerImageUrl) return category.bannerImageUrl
-  return (
-    fallbackBannerById.get(category.id) ??
-    fallbackBannerByTitle.get(normalizeCategoryKey(category.title)) ??
-    null
+
+  const byId = categoryBannerById[category.id]
+  if (byId) return byId
+
+  if (category.iconKey) {
+    const byIcon = categoryBannerByIconKey[category.iconKey]
+    if (byIcon) return byIcon
+  }
+
+  const normalizedTitle = normalizeCategoryKey(category.title)
+  const byTitle = fallbackBannerByTitle.get(normalizedTitle)
+  if (byTitle) return byTitle
+
+  const byHint = categoryTitleBannerHints.find((hint) =>
+    hint.includes.every((part) => normalizedTitle.includes(part)),
   )
+  if (byHint) return byHint.banner
+
+  return null
 }
 
 const productImageOverrides: Partial<
