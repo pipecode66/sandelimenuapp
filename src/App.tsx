@@ -41,6 +41,13 @@ const menuCategoryIcons: Record<string, LucideIcon> = {
   market: ShoppingBag,
 }
 
+const toOptimizedAssetPath = (value: string | null | undefined) => {
+  if (!value) return null
+  if (!value.startsWith('/assets/')) return value
+  if (value.endsWith('.webp')) return value
+  return value.replace(/\.(png|jpe?g)$/i, '.webp')
+}
+
 const categoryBannerById: Record<string, string> = {
   'desayunos-brunch': '/assets/banners/banner-desayunos-brunch.png',
   sandwich: '/assets/banners/banner-sandwich.png',
@@ -126,24 +133,24 @@ const categoryTitleBannerHints: Array<{ includes: string[]; banner: string }> = 
 
 const resolveCategoryBannerUrl = (category?: Category) => {
   if (!category) return null
-  if (category.bannerImageUrl) return category.bannerImageUrl
+  if (category.bannerImageUrl) return toOptimizedAssetPath(category.bannerImageUrl)
 
-  const byId = categoryBannerById[category.id]
+  const byId = toOptimizedAssetPath(categoryBannerById[category.id])
   if (byId) return byId
 
   if (category.iconKey) {
-    const byIcon = categoryBannerByIconKey[category.iconKey]
+    const byIcon = toOptimizedAssetPath(categoryBannerByIconKey[category.iconKey])
     if (byIcon) return byIcon
   }
 
   const normalizedTitle = normalizeCategoryKey(category.title)
-  const byTitle = fallbackBannerByTitle.get(normalizedTitle)
+  const byTitle = toOptimizedAssetPath(fallbackBannerByTitle.get(normalizedTitle) ?? null)
   if (byTitle) return byTitle
 
   const byHint = categoryTitleBannerHints.find((hint) =>
     hint.includes.every((part) => normalizedTitle.includes(part)),
   )
-  if (byHint) return byHint.banner
+  if (byHint) return toOptimizedAssetPath(byHint.banner)
 
   return null
 }
@@ -255,9 +262,10 @@ const productImageOverrides: Partial<
 
 const getProductImages = (product: Product) => {
   const override = productImageOverrides[product.id]
+  const fallbackImageSrc = toOptimizedAssetPath(product.imageSrc)
   return {
-    cardSrc: override?.cardSrc ?? product.imageSrc ?? null,
-    detailSrc: override?.detailSrc ?? product.imageSrc ?? null,
+    cardSrc: toOptimizedAssetPath(override?.cardSrc) ?? fallbackImageSrc,
+    detailSrc: toOptimizedAssetPath(override?.detailSrc) ?? fallbackImageSrc,
   }
 }
 
