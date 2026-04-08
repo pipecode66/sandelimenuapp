@@ -727,7 +727,9 @@ function App() {
 
             <section className="catalog-hero">
               <div
-                className="catalog-banner-placeholder"
+                className={`catalog-banner-placeholder ${
+                  activeCategory?.bannerImageUrl ? 'has-image' : ''
+                }`}
                 role="img"
                 aria-label={activeCategory ? `Banner de ${activeCategory.title}` : 'Banner de categoria'}
               >

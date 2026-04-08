@@ -357,6 +357,18 @@ const categorySeeds: CategorySeed[] = [
   },
 ]
 
+const categoryBannerById: Partial<Record<Category['id'], string>> = {
+  'desayunos-brunch': '/assets/banners/banner-desayunos-brunch.png',
+  sandwich: '/assets/banners/banner-sandwich.png',
+  hamburguesa: '/assets/banners/banner-hamburguesas.png',
+  pizzas: '/assets/banners/banner-pizzas.png',
+  postres: '/assets/banners/banner-postres.png',
+  'tortas-porcion': '/assets/banners/banner-tortas-porcion.png',
+  'bebidas-frias': '/assets/banners/banner-bebidas-frias.png',
+  helados: '/assets/banners/banner-helados.png',
+  'bebidas-calientes': '/assets/banners/banner-bebidas-calientes.png',
+}
+
 export const menuCategories: Category[] = categorySeeds.map((category) => {
   const sections = category.sections?.map((section) => ({
     id: section.id,
@@ -374,6 +386,7 @@ export const menuCategories: Category[] = categorySeeds.map((category) => {
     id: category.id,
     title: category.title,
     blurb: category.blurb,
+    bannerImageUrl: categoryBannerById[category.id] ?? null,
     products,
     sections,
   }
