@@ -21,6 +21,7 @@ import {
   X,
   type LucideIcon,
 } from 'lucide-react'
+import { useCallback } from 'react'
 import './App.css'
 import { businessInfo, type Category, type Product } from './data/menuData'
 import { fallbackMenuCategories, loadRemoteMenuCategories } from './lib/menuApi'
@@ -283,6 +284,7 @@ const createWhatsAppHref = (phone: string, message: string) =>
 const productClicksStorageKey = 'sandeli-product-clicks-v1'
 const menuQueryKey = 'menu'
 const menuQueryValue = '1'
+const menuCategoryQueryKey = 'categoria'
 const legacyMenuPaths = new Set(['/menu', '/menú'])
 
 const normalizePathname = (pathname: string) => {
@@ -296,11 +298,68 @@ const normalizePathname = (pathname: string) => {
 const isLegacyMenuPath = (pathname: string) =>
   legacyMenuPaths.has(normalizePathname(pathname))
 
+type MenuUrlState = {
+  isMenuActive: boolean
+  categoryId: string | null
+}
+
+const getMenuUrlState = (url: URL): MenuUrlState => {
+  const isMenuActive =
+    url.searchParams.get(menuQueryKey) === menuQueryValue ||
+    isLegacyMenuPath(url.pathname)
+
+  if (!isMenuActive) {
+    return {
+      isMenuActive: false,
+      categoryId: null,
+    }
+  }
+
+  return {
+    isMenuActive: true,
+    categoryId: url.searchParams.get(menuCategoryQueryKey),
+  }
+}
+
 const startsInMenuRoute = () =>
   typeof window !== 'undefined' &&
-  (new URLSearchParams(window.location.search).get(menuQueryKey) ===
-    menuQueryValue ||
-    isLegacyMenuPath(window.location.pathname))
+  getMenuUrlState(new URL(window.location.href)).isMenuActive
+
+const setMenuRouteStateInUrl = (
+  isMenuRouteEnabled: boolean,
+  mode: 'push' | 'replace' = 'push',
+  categoryId?: string | null,
+) => {
+  if (typeof window === 'undefined') return
+  const url = new URL(window.location.href)
+
+  if (isLegacyMenuPath(url.pathname)) {
+    url.pathname = '/'
+  }
+
+  if (isMenuRouteEnabled) {
+    url.searchParams.set(menuQueryKey, menuQueryValue)
+    if (categoryId) {
+      url.searchParams.set(menuCategoryQueryKey, categoryId)
+    } else {
+      url.searchParams.delete(menuCategoryQueryKey)
+    }
+  } else {
+    url.searchParams.delete(menuQueryKey)
+    url.searchParams.delete(menuCategoryQueryKey)
+  }
+
+  const nextUrl = `${url.pathname}${url.search}${url.hash}`
+  const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`
+  if (nextUrl === currentUrl) return
+
+  if (mode === 'replace') {
+    window.history.replaceState(null, '', nextUrl)
+    return
+  }
+
+  window.history.pushState(null, '', nextUrl)
+}
 
 type WhatsAppLogoProps = {
   size?: number
@@ -326,14 +385,21 @@ function WhatsAppLogo({ size = 18, className }: WhatsAppLogoProps) {
 }
 
 function App() {
+  const initialMenuUrlState =
+    typeof window !== 'undefined'
+      ? getMenuUrlState(new URL(window.location.href))
+      : { isMenuActive: false, categoryId: null }
+
   const [isEntryOpen, setIsEntryOpen] = useState(() => !startsInMenuRoute())
   const [isMenuPickerOpen, setIsMenuPickerOpen] = useState(() =>
-    startsInMenuRoute(),
+    initialMenuUrlState.isMenuActive && !initialMenuUrlState.categoryId,
   )
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(() =>
+    initialMenuUrlState.isMenuActive && Boolean(initialMenuUrlState.categoryId),
+  )
   const [menuCategories, setMenuCategories] = useState<Category[]>(fallbackMenuCategories)
   const [activeCategoryId, setActiveCategoryId] = useState(
-    fallbackMenuCategories[0]?.id || '',
+    initialMenuUrlState.categoryId ?? fallbackMenuCategories[0]?.id ?? '',
   )
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
   const [productClickCounts, setProductClickCounts] = useState<
@@ -456,6 +522,7 @@ function App() {
     setSelectedProductId(null)
     setIsMenuOpen(false)
     setIsMenuPickerOpen(true)
+    setMenuRouteStateInUrl(true, 'replace')
   }
   const openMenuPicker = () => {
     setIsEntryOpen(false)
@@ -466,40 +533,17 @@ function App() {
     setSelectedProductId(null)
     setIsMenuPickerOpen(false)
     setIsEntryOpen(true)
-    setMenuQueryInUrl(false, 'replace')
-  }
-
-  const setMenuQueryInUrl = (
-    isMenuRouteEnabled: boolean,
-    mode: 'push' | 'replace' = 'push',
-  ) => {
-    if (typeof window === 'undefined') return
-    const url = new URL(window.location.href)
-    if (isLegacyMenuPath(url.pathname)) {
-      url.pathname = '/'
-    }
-    if (isMenuRouteEnabled) {
-      url.searchParams.set(menuQueryKey, menuQueryValue)
-    } else {
-      url.searchParams.delete(menuQueryKey)
-    }
-    const nextUrl = `${url.pathname}${url.search}${url.hash}`
-    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`
-    if (nextUrl === currentUrl) return
-    if (mode === 'replace') {
-      window.history.replaceState(null, '', nextUrl)
-      return
-    }
-    window.history.pushState(null, '', nextUrl)
+    setMenuRouteStateInUrl(false, 'replace')
   }
 
   const handleMenuAccess = () => {
     openMenuPicker()
-    setMenuQueryInUrl(true, 'push')
+    setMenuRouteStateInUrl(true, 'push')
   }
 
   const handleMenuCategoryPick = (categoryId: string) => {
     openMenu(categoryId)
+    setMenuRouteStateInUrl(true, 'push', categoryId)
   }
 
   const handleFindUsAccess = () => {
@@ -528,7 +572,11 @@ function App() {
   const closeProductDetail = () => setSelectedProductId(null)
 
   const shareProduct = async (category: Category, product: Product) => {
-    const shareUrl = new URL(window.location.origin + window.location.pathname)
+    const shareUrl = new URL(
+      window.location.origin + window.location.pathname + window.location.search,
+    )
+    shareUrl.searchParams.set(menuQueryKey, menuQueryValue)
+    shareUrl.searchParams.set(menuCategoryQueryKey, category.id)
     shareUrl.hash = product.id
 
     const shareData = {
@@ -557,6 +605,46 @@ function App() {
       }
     }
   }
+
+  const syncMenuUiFromUrl = useCallback(() => {
+    if (typeof window === 'undefined') return
+
+    const url = new URL(window.location.href)
+    const menuUrlState = getMenuUrlState(url)
+
+    if (!menuUrlState.isMenuActive) {
+      setSelectedProductId(null)
+      setIsMenuOpen(false)
+      setIsMenuPickerOpen(false)
+      setIsEntryOpen(true)
+      return
+    }
+
+    if (isLegacyMenuPath(url.pathname)) {
+      setMenuRouteStateInUrl(true, 'replace', menuUrlState.categoryId)
+    }
+
+    setIsEntryOpen(false)
+
+    if (menuUrlState.categoryId) {
+      const nextCategory = categoryLookup.get(menuUrlState.categoryId) ?? menuCategories[0]
+      if (nextCategory) {
+        setActiveCategoryId(nextCategory.id)
+        setIsMenuOpen(true)
+        setIsMenuPickerOpen(false)
+
+        if (nextCategory.id !== menuUrlState.categoryId) {
+          setMenuRouteStateInUrl(true, 'replace', nextCategory.id)
+        }
+        return
+      }
+    }
+
+    setSelectedProductId(null)
+    setIsMenuOpen(false)
+    setIsMenuPickerOpen(true)
+    setMenuRouteStateInUrl(true, 'replace')
+  }, [categoryLookup, menuCategories])
 
   useEffect(() => {
     let cancelled = false
@@ -609,11 +697,22 @@ function App() {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
       if (selectedProductEntry) {
-        closeProductDetail()
+        setSelectedProductId(null)
         return
       }
-      if (isMenuOpen) backToMenuPicker()
-      if (isMenuPickerOpen) closeMenuPicker()
+      if (isMenuOpen) {
+        setSelectedProductId(null)
+        setIsMenuOpen(false)
+        setIsMenuPickerOpen(true)
+        setMenuRouteStateInUrl(true, 'replace')
+        return
+      }
+      if (isMenuPickerOpen) {
+        setSelectedProductId(null)
+        setIsMenuPickerOpen(false)
+        setIsEntryOpen(true)
+        setMenuRouteStateInUrl(false, 'replace')
+      }
     }
 
     window.addEventListener('keydown', handleEscape)
@@ -631,41 +730,22 @@ function App() {
       setIsMenuOpen(true)
       setIsMenuPickerOpen(false)
       setSelectedProductId(productMatch.product.id)
+      setMenuRouteStateInUrl(true, 'replace', productMatch.category.id)
     }
   }, [productLookup])
 
   useEffect(() => {
-    if (!isLegacyMenuPath(window.location.pathname)) return
-    setMenuQueryInUrl(true, 'replace')
-  }, [])
+    syncMenuUiFromUrl()
+  }, [syncMenuUiFromUrl])
 
   useEffect(() => {
     const handlePopState = () => {
-      const isMenuQueryActive =
-        new URLSearchParams(window.location.search).get(menuQueryKey) ===
-        menuQueryValue
-      const inMenuRoute = isMenuQueryActive || isLegacyMenuPath(window.location.pathname)
-
-      if (inMenuRoute) {
-        if (!isMenuQueryActive) {
-          setMenuQueryInUrl(true, 'replace')
-        }
-        setIsEntryOpen(false)
-        setSelectedProductId(null)
-        setIsMenuOpen(false)
-        setIsMenuPickerOpen(true)
-        return
-      }
-
-      setSelectedProductId(null)
-      setIsMenuOpen(false)
-      setIsMenuPickerOpen(false)
-      setIsEntryOpen(true)
+      syncMenuUiFromUrl()
     }
 
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
-  }, [])
+  }, [syncMenuUiFromUrl])
 
   return (
     <>
@@ -875,6 +955,18 @@ function App() {
                 Categorias
               </button>
             </header>
+
+            {!selectedProductEntry ? (
+              <button
+                type="button"
+                className="catalog-floating-back"
+                onClick={backToMenuPicker}
+                aria-label="Volver rapidamente a categorias"
+              >
+                <ArrowLeft size={16} />
+                Categorias
+              </button>
+            ) : null}
 
             <section className="catalog-hero">
               <div

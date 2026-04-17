@@ -178,6 +178,7 @@
 .menu-choice-pill-icon,
 .section-back,
 .catalog-back,
+.catalog-floating-back,
 .catalog-featured-content,
 .catalog-product-toggle,
 .product-view-close,
@@ -228,6 +229,8 @@
 .section-back:focus-visible,
 .catalog-back:hover,
 .catalog-back:focus-visible,
+.catalog-floating-back:hover,
+.catalog-floating-back:focus-visible,
 .catalog-featured-content:hover,
 .catalog-featured-content:focus-visible,
 .catalog-product-toggle:hover,
@@ -1196,6 +1199,33 @@
   cursor: pointer;
 }
 
+.catalog-floating-back {
+  position: fixed;
+  right: max(0.88rem, calc(50vw - 220px + 0.86rem));
+  bottom: calc(0.9rem + env(safe-area-inset-bottom));
+  z-index: 30;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent);
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      140deg,
+      color-mix(in srgb, var(--brand-primary) 94%, black),
+      color-mix(in srgb, var(--brand-secondary) 88%, black)
+    );
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  max-width: calc(100vw - 1.76rem);
+  gap: 0.32rem;
+  padding: 0.56rem 0.82rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  box-shadow:
+    0 14px 24px color-mix(in srgb, var(--ink) 20%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  cursor: pointer;
+}
+
 .catalog-hero {
   position: relative;
   display: flex;
@@ -2038,6 +2068,7 @@
   .menu-choice-pill-icon,
   .section-back,
   .catalog-back,
+  .catalog-floating-back,
   .catalog-featured-content,
   .catalog-product-toggle,
   .product-view-close,
