@@ -280,9 +280,10 @@ const createWhatsAppHref = (phone: string, message: string) =>
     message,
   )}`
 
-const menuRoutePath = '/menú'
-const menuRouteAlias = '/menu'
 const productClicksStorageKey = 'sandeli-product-clicks-v1'
+const menuQueryKey = 'menu'
+const menuQueryValue = '1'
+const legacyMenuPaths = new Set(['/menu', '/menú'])
 
 const normalizePathname = (pathname: string) => {
   try {
@@ -292,13 +293,14 @@ const normalizePathname = (pathname: string) => {
   }
 }
 
-const isMenuRoute = (pathname: string) => {
-  const normalized = normalizePathname(pathname)
-  return normalized === menuRoutePath || normalized === menuRouteAlias
-}
+const isLegacyMenuPath = (pathname: string) =>
+  legacyMenuPaths.has(normalizePathname(pathname))
 
 const startsInMenuRoute = () =>
-  typeof window !== 'undefined' && isMenuRoute(window.location.pathname)
+  typeof window !== 'undefined' &&
+  (new URLSearchParams(window.location.search).get(menuQueryKey) ===
+    menuQueryValue ||
+    isLegacyMenuPath(window.location.pathname))
 
 type WhatsAppLogoProps = {
   size?: number
@@ -464,17 +466,36 @@ function App() {
     setSelectedProductId(null)
     setIsMenuPickerOpen(false)
     setIsEntryOpen(true)
+    setMenuQueryInUrl(false, 'replace')
   }
 
-  const pushMenuRoute = () => {
+  const setMenuQueryInUrl = (
+    isMenuRouteEnabled: boolean,
+    mode: 'push' | 'replace' = 'push',
+  ) => {
     if (typeof window === 'undefined') return
-    if (isMenuRoute(window.location.pathname)) return
-    window.history.pushState(null, '', menuRoutePath)
+    const url = new URL(window.location.href)
+    if (isLegacyMenuPath(url.pathname)) {
+      url.pathname = '/'
+    }
+    if (isMenuRouteEnabled) {
+      url.searchParams.set(menuQueryKey, menuQueryValue)
+    } else {
+      url.searchParams.delete(menuQueryKey)
+    }
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`
+    if (nextUrl === currentUrl) return
+    if (mode === 'replace') {
+      window.history.replaceState(null, '', nextUrl)
+      return
+    }
+    window.history.pushState(null, '', nextUrl)
   }
 
   const handleMenuAccess = () => {
     openMenuPicker()
-    pushMenuRoute()
+    setMenuQueryInUrl(true, 'push')
   }
 
   const handleMenuCategoryPick = (categoryId: string) => {
@@ -605,6 +626,7 @@ function App() {
 
     const productMatch = productLookup.get(hash)
     if (productMatch) {
+      setIsEntryOpen(false)
       setActiveCategoryId(productMatch.category.id)
       setIsMenuOpen(true)
       setIsMenuPickerOpen(false)
@@ -613,8 +635,21 @@ function App() {
   }, [productLookup])
 
   useEffect(() => {
+    if (!isLegacyMenuPath(window.location.pathname)) return
+    setMenuQueryInUrl(true, 'replace')
+  }, [])
+
+  useEffect(() => {
     const handlePopState = () => {
-      if (isMenuRoute(window.location.pathname)) {
+      const isMenuQueryActive =
+        new URLSearchParams(window.location.search).get(menuQueryKey) ===
+        menuQueryValue
+      const inMenuRoute = isMenuQueryActive || isLegacyMenuPath(window.location.pathname)
+
+      if (inMenuRoute) {
+        if (!isMenuQueryActive) {
+          setMenuQueryInUrl(true, 'replace')
+        }
         setIsEntryOpen(false)
         setSelectedProductId(null)
         setIsMenuOpen(false)
