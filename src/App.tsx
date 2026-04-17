@@ -956,18 +956,6 @@ function App() {
               </button>
             </header>
 
-            {!selectedProductEntry ? (
-              <button
-                type="button"
-                className="catalog-floating-back"
-                onClick={backToMenuPicker}
-                aria-label="Volver rapidamente a categorias"
-              >
-                <ArrowLeft size={16} />
-                Categorias
-              </button>
-            ) : null}
-
             <section className="catalog-hero">
               <div
                 className={`catalog-banner-placeholder ${
@@ -1089,6 +1077,21 @@ function App() {
               </section>
             ))}
           </section>
+
+          {!selectedProductEntry ? (
+            <button
+              type="button"
+              className="catalog-floating-back"
+              onClick={(event) => {
+                event.stopPropagation()
+                backToMenuPicker()
+              }}
+              aria-label="Volver rapidamente a categorias"
+            >
+              <ArrowLeft size={16} />
+              Categorias
+            </button>
+          ) : null}
         </div>
       ) : null}
 

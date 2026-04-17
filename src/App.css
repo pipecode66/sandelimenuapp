@@ -1201,7 +1201,7 @@
 
 .catalog-floating-back {
   position: fixed;
-  right: max(0.88rem, calc(50vw - 220px + 0.86rem));
+  right: 0.92rem;
   bottom: calc(0.9rem + env(safe-area-inset-bottom));
   z-index: 30;
   border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, transparent);
